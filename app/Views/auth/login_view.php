@@ -156,10 +156,44 @@
 
                 <!-- Flashdata Error -->
                 <?php if (session()->get('error')): ?>
-                    <div class="mb-4 p-3 rounded-full bg-red-100/60 text-red-700 font-label-sm text-label-sm">
+                    <div class="mb-4 p-3 rounded-full bg-red-100/60 text-red-700 font-label-sm text-label-sm text-center">
                         <?= esc(session()->get('error')) ?>
                     </div>
                 <?php endif; ?>
+
+                <!-- Card Note Akun Demo -->
+                <div class="mb-space-md p-3.5 rounded-2xl bg-surface-container/80 border border-outline-variant/30 backdrop-blur-md shadow-sm">
+                    <div class="flex items-center gap-2 mb-2">
+                        <span class="material-symbols-outlined text-primary text-[18px]">info</span>
+                        <span class="font-title-md text-label-md text-on-surface font-semibold">Akun Demo (Klik untuk Auto-fill)</span>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        <!-- Admin Pill -->
+                        <button type="button" 
+                                onclick="fillDemo('admin@gmail.com', 'admin123')" 
+                                class="flex flex-col text-left p-2 rounded-xl bg-surface-container-lowest/60 hover:bg-primary/10 border border-transparent hover:border-primary/30 transition-all group">
+                            <div class="flex items-center justify-between w-full">
+                                <span class="font-label-sm text-xs font-bold text-primary group-hover:text-primary-container">1. Admin</span>
+                                <span class="material-symbols-outlined text-xs text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">content_paste</span>
+                            </div>
+                            <span class="font-body-md text-[11px] text-on-surface mt-0.5 truncate">admin@gmail.com</span>
+                            <span class="font-body-md text-[11px] text-on-surface-variant">Pass: admin123</span>
+                        </button>
+
+                        <!-- Customer Pill -->
+                        <button type="button" 
+                                onclick="fillDemo('customer@gmail.com', 'customer123')" 
+                                class="flex flex-col text-left p-2 rounded-xl bg-surface-container-lowest/60 hover:bg-secondary/10 border border-transparent hover:border-secondary/30 transition-all group">
+                            <div class="flex items-center justify-between w-full">
+                                <span class="font-label-sm text-xs font-bold text-secondary group-hover:text-on-secondary-container">2. Customer</span>
+                                <span class="material-symbols-outlined text-xs text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity">content_paste</span>
+                            </div>
+                            <span class="font-body-md text-[11px] text-on-surface mt-0.5 truncate">customer@gmail.com</span>
+                            <span class="font-body-md text-[11px] text-on-surface-variant">Pass: customer123</span>
+                        </button>
+                    </div>
+                </div>
 
                 <!-- Form Section -->
                 <form class="flex flex-col gap-space-md" action="<?= base_url('/login/process') ?>" method="post" id="loginForm">
@@ -254,7 +288,7 @@
 
                 <!-- Flashdata Success -->
                 <?php if (session()->get('success')): ?>
-                    <div class="mb-4 p-3 rounded-full bg-green-100/60 text-green-700 font-label-sm text-label-sm">
+                    <div class="mb-4 p-3 rounded-full bg-green-100/60 text-green-700 font-label-sm text-label-sm text-center">
                         <?= esc(session()->get('success')) ?>
                     </div>
                 <?php endif; ?>
@@ -274,6 +308,7 @@
     </main>
 
     <script>
+        // Toggle Show/Hide Password
         (function() {
             const toggleBtn = document.getElementById('togglePassword');
             const passwordInput = document.getElementById('password');
@@ -287,6 +322,21 @@
                 });
             }
         })();
+
+        // Function Auto-Fill Demo Credentials
+        function fillDemo(identity, password) {
+            const identityInput = document.getElementById('identity');
+            const passwordInput = document.getElementById('password');
+
+            if (identityInput && passwordInput) {
+                identityInput.value = identity;
+                passwordInput.value = password;
+                
+                // Memberikan efek visual fokus sebentar
+                identityInput.focus();
+                setTimeout(() => passwordInput.focus(), 150);
+            }
+        }
     </script>
 
     <style>
