@@ -3,12 +3,16 @@
 namespace App\Database\Migrations;
 
 use CodeIgniter\Database\Migration;
-use CodeIgniter\Database\RawSql;
 
 class CreateUsersTable extends Migration
 {
     public function up()
     {
+        // Check if table already exists (safe for migrations that ran before)
+        if ($this->db->tableExists('users')) {
+            return;
+        }
+
         $this->db->disableForeignKeyChecks();
 
         $this->forge->addField([
@@ -34,27 +38,24 @@ class CreateUsersTable extends Migration
                 'null' => false,
             ],
             'role' => [
-                'type' => 'ENUM',
-                'constraint' => "'admin', 'customer'",
+                'type' => "ENUM('admin', 'customer')",
                 'default' => 'customer',
                 'null' => false,
             ],
             'created_at' => [
-                'type' => 'TIMESTAMP',
-                'null' => false,
-                'default' => new RawSql('CURRENT_TIMESTAMP'),
+                'type' => 'DATETIME',
+                'null' => true,
             ],
             'updated_at' => [
-                'type' => 'TIMESTAMP',
-                'null' => false,
-                'default' => new RawSql('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+                'type' => 'DATETIME',
+                'null' => true,
             ],
         ]);
 
         $this->forge->addKey('id', true);
         $this->forge->addUniqueKey('username');
         $this->forge->addUniqueKey('email');
-        $this->forge->createTable('users', true);
+        $this->forge->createTable('users');
 
         $this->db->enableForeignKeyChecks();
     }

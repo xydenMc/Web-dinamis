@@ -16,7 +16,10 @@ class ProdukModel extends Model
         'harga',
         'stok',
         'status',
-        'gambar'
+        'gambar',
+        'created_at',
+        'updated_at',
+        'deleted_at'
     ];
 
     protected $useTimestamps = true;

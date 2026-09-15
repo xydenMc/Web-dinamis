@@ -65,7 +65,7 @@
                         "primary-container": "#bf542c",
                         "on-background": "#1c1c19",
                         "on-surface-variant": "#57423b",
-                        "surface-container-highest": "#e5e2dd",
+                        "surface-container-highest": "#e5e22dd",
                         "on-tertiary-fixed-variant": "#693c13",
                         "tertiary-container": "#9e683c",
                         "on-surface": "#1c1c19",
@@ -229,6 +229,21 @@
         </div>
     <?php endif; ?>
 
+    <?php if (session()->getFlashdata('errors')): ?>
+        <div id="flash-validation-errors" class="fixed top-20 right-4 z-50 flex items-center gap-3 px-6 py-3 rounded-lg bg-red-500 text-white shadow-lg">
+            <span class="material-symbols-outlined text-[18px]">error</span>
+            <span class="font-semibold">Terjadi kesalahan validasi</span>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const errors = <?= json_encode(session()->getFlashdata('errors')) ?>;
+                if (errors && Object.keys(errors).length > 0) {
+                    alert('Kesalahan: ' + JSON.stringify(errors));
+                }
+            });
+        </script>
+    <?php endif; ?>
+
     <header class="fixed top-0 inset-x-0 z-50">
         <div class="w-full max-w-[1280px] h-20 bg-surface-container-lowest/65 backdrop-blur-2xl rounded-full shadow-[0_16px_36px_-8px_rgba(42,30,23,0.08),0_4px_16px_-2px_rgba(42,30,23,0.04)] mx-auto px-gutter-mobile lg:px-gutter-desktop flex items-center justify-between transition-all">
             <div class="flex items-center gap-space-sm">
@@ -243,6 +258,8 @@
             <nav class="hidden lg:flex items-center gap-space-xs bg-surface-container-low/70 p-space-2xs rounded-full backdrop-blur-md">
                 <?php if (isset($user) && $user && isset($role) && $role === 'admin'): ?>
                     <a class="px-space-md py-space-xs text-on-surface-variant font-label-md text-label-md hover:text-on-surface transition-colors rounded-full" data-path="dashboard" href="<?= base_url('dashboard') ?>">Dashboard</a>
+                    <a class="px-space-md py-space-xs text-on-surface-variant font-label-md text-label-md hover:text-on-surface transition-colors rounded-full" data-path="kategori" href="<?= base_url('kategori') ?>">Kategori</a>
+                    <a class="px-space-md py-space-xs text-on-surface-variant font-label-md text-label-md hover:text-on-surface transition-colors rounded-full" data-path="transaksi" href="<?= base_url('transaksi') ?>">Transaksi</a>
                 <?php endif; ?>
             </nav>
 
@@ -254,6 +271,12 @@
                         <span>Tambah Produk</span>
                     </a>
                 <?php endif; ?>
+
+                <!-- Keranjang Button -->
+                <a href="<?= base_url('cart') ?>" class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary text-on-primary font-label-md text-label-md hover:bg-primary-container transition-all">
+                    <span class="material-symbols-outlined text-[18px]">shopping_cart</span>
+                    <span id="cart-count"><?= count(session()->get('cart') ?? []) ?></span>
+                </a>
 
                 <!-- Logout & User Profile Icon (Tampil untuk semua role yang sudah login) -->
                 <?php if (isset($user) && $user): ?>
@@ -316,21 +339,26 @@
                         </div>
 
                         <div class="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-1 pt-1 scrollbar-none px-2" id="filterContainer">
-                            <button class="filter-btn active-filter px-5 py-1.5 rounded-full font-label-md text-label-md transition-all duration-200 bg-primary text-on-primary shadow-sm" data-filter="all">
-                                Semua
-                            </button>
-                            <button class="filter-btn px-5 py-1.5 rounded-full font-label-md text-label-md transition-all duration-200 bg-surface-container-low/80 hover:bg-surface-container-high text-on-surface-variant" data-filter="keramik">
-                                Keramik
-                            </button>
-                            <button class="filter-btn px-5 py-1.5 rounded-full font-label-md text-label-md transition-all duration-200 bg-surface-container-low/80 hover:bg-surface-container-high text-on-surface-variant" data-filter="kayu">
-                                Kayu
-                            </button>
-                            <button class="filter-btn px-5 py-1.5 rounded-full font-label-md text-label-md transition-all duration-200 bg-surface-container-low/80 hover:bg-surface-container-high text-on-surface-variant" data-filter="beton">
-                                Beton
-                            </button>
-                            <button class="filter-btn px-5 py-1.5 rounded-full font-label-md text-label-md transition-all duration-200 bg-surface-container-low/80 hover:bg-surface-container-high text-on-surface-variant" data-filter="terakota">
-                                Terakota
-                            </button>
+                            <?php if (isset($kategoris) && count($kategoris) > 0): ?>
+                                <?php foreach ($kategoris as $kategori): ?>
+                                    <button class="filter-btn px-5 py-1.5 rounded-full font-label-md text-label-md transition-all duration-200 bg-surface-container-low/80 hover:bg-surface-container-high text-on-surface-variant" data-filter="<?= strtolower($kategori['nama_kategori']) ?>">
+                                        <?= esc($kategori['nama_kategori']) ?>
+                                    </button>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <button class="filter-btn active-filter px-5 py-1.5 rounded-full font-label-md text-label-md transition-all duration-200 bg-primary text-on-primary shadow-sm" data-filter="all">
+                                    Semua
+                                </button>
+                                <button class="filter-btn px-5 py-1.5 rounded-full font-label-md text-label-md transition-all duration-200 bg-surface-container-low/80 hover:bg-surface-container-high text-on-surface-variant" data-filter="keramik">
+                                    Keramik
+                                </button>
+                                <button class="filter-btn px-5 py-1.5 rounded-full font-label-md text-label-md transition-all duration-200 bg-surface-container-low/80 hover:bg-surface-container-high text-on-surface-variant" data-filter="kayu">
+                                    Kayu
+                                </button>
+                                <button class="filter-btn px-5 py-1.5 rounded-full font-label-md text-label-md transition-all duration-200 bg-surface-container-low/80 hover:bg-surface-container-high text-on-surface-variant" data-filter="beton">
+                                    Beton
+                                </button>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </section>
@@ -412,13 +440,20 @@
                                     <!-- Price and Action -->
                                     <div class="pt-3 flex items-center justify-between">
                                         <div class="flex flex-col">
-                                            <span class="font-label-sm text-label-sm text-outline uppercase font-semibold">Harga</span>
+                                            <span class="font-label-sm text-label-sm text-on-surface-variant uppercase font-semibold">Harga</span>
                                             <span class="font-headline-md text-headline-md text-primary font-bold tracking-tight">Rp <?= number_format($harga, 0, ',', '.') ?></span>
                                         </div>
-                                        <button onclick='openDetailModal(<?= json_encode($produk, JSON_HEX_APOS | JSON_HEX_QUOT) ?>)' class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-primary text-on-primary font-label-md text-label-md shadow-[0_6px_16px_-2px_rgba(159,60,22,0.35)] hover:bg-primary-container transition-all">
-                                            <span class="material-symbols-outlined text-[18px]">shopping_bag</span>
-                                            <span>Pesan</span>
-                                        </button>
+                                        <?php if (isset($user) && $user): ?>
+                                            <button onclick='openDetailModal(<?= json_encode($produk, JSON_HEX_APOS | JSON_HEX_QUOT) ?>)' class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-primary text-on-primary font-label-md text-label-md shadow-[0_6px_16px_-2px_rgba(159,60,22,0.35)] hover:bg-primary-container transition-all">
+                                                <span class="material-symbols-outlined text-[18px]">shopping_bag</span>
+                                                <span>Pesan</span>
+                                            </button>
+                                        <?php else: ?>
+                                            <a href="<?= base_url('login') ?>" class="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-primary text-on-primary font-label-md text-label-md shadow-[0_6px_16px_-2px_rgba(159,60,22,0.35)] hover:bg-primary-container transition-all">
+                                                <span class="material-symbols-outlined text-[18px]">login</span>
+                                                <span>Login</span>
+                                            </a>
+                                        <?php endif; ?>
                                     </div>
                                 </article>
                             <?php endforeach; ?>
@@ -480,17 +515,23 @@
 
                 <div>
                     <label for="nama_produk" class="font-label-md text-label-md font-semibold text-on-surface block mb-1">Nama Produk <span class="text-red-600">*</span></label>
-                    <input type="text" id="nama_produk" name="nama_produk" class="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-outline/30 text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm" placeholder="Contoh: Pot Keramik Minimalis" required minlength="3" maxlength="255">
+                    <input type="text" id="nama_produk" name="nama_produk" class="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-outline/30 text-on-surface font-body-md text-body-md placeholder:text-outline focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm" placeholder="Contoh: Pot Keramik Minimalis" required minlength="3" maxlength="255">
                 </div>
 
                 <div>
-                    <label for="kategori" class="font-label-md text-label-md font-semibold text-on-surface block mb-1">Kategori</label>
+                    <label for="kategori" class="font-label-md text-label-md font-semibold text-on-surface block mb-1">Kategori <span class="text-red-600">*</span></label>
                     <select id="kategori" name="kategori" class="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-outline/30 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm">
-                        <option value="Keramik">Keramik</option>
-                        <option value="Kayu">Kayu</option>
-                        <option value="Beton">Beton</option>
-                        <option value="Terakota">Terakota</option>
-                        <option value="Lainnya">Lainnya</option>
+                        <?php if (isset($kategoris) && count($kategoris) > 0): ?>
+                            <?php foreach ($kategoris as $kategori): ?>
+                                <option value="<?= esc($kategori['nama_kategori']) ?>"><?= esc($kategori['nama_kategori']) ?></option>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <option value="Keramik">Keramik</option>
+                            <option value="Kayu">Kayu</option>
+                            <option value="Beton">Beton</option>
+                            <option value="Terakota">Terakota</option>
+                            <option value="Lainnya">Lainnya</option>
+                        <?php endif; ?>
                     </select>
                 </div>
 
@@ -520,7 +561,7 @@
                     <label for="status" class="font-label-md text-label-md font-semibold text-on-surface block mb-1">Status</label>
                     <select id="status" name="status" class="w-full px-4 py-2.5 rounded-xl bg-surface-container-lowest border border-outline/30 text-on-surface focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all text-sm">
                         <option value="aktif">Aktif</option>
-                        <option value="non-aktif">Non-aktif</option>
+                        <option value="non aktif">Non aktif</option>
                     </select>
                 </div>
 
@@ -594,12 +635,46 @@
                                 <span id="detailStatus"></span>
                             </div>
 
-                            <button onclick="alert('Fitur pesan akan segera hadir!')" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-full bg-primary text-on-primary font-label-md text-label-md font-semibold shadow-[0_6px_16px_-2px_rgba(159,60,22,0.35)] hover:bg-primary-container hover:shadow-lg transition-all">
-                                <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
-                                <span>Pesan Sekarang</span>
-                            </button>
+                            <!-- Add to Cart Form -->
+                            <form action="/cart/add" method="post" id="addToCartForm">
+                                <?= csrf_field() ?>
+                                <input type="hidden" id="addToCartId" name="id_produk">
+                                <input type="hidden" id="addToCartGambar" name="gambar">
+                                <input type="hidden" id="addToCartNama" name="nama_produk">
+                                <input type="hidden" id="addToCartKategori" name="kategori">
+                                <input type="hidden" id="addToCartHarga" name="harga" value="0">
+                                <input type="hidden" id="addToCartStok" name="stok" value="0">
+
+                                <div class="flex items-center gap-3 mb-3">
+                                    <label class="text-sm font-medium text-on-surface-variant">Qty:</label>
+                                    <input type="number" id="detailQuantity" name="quantity" value="1" min="1" max="10" class="w-20 px-2 py-1 rounded-full border border-outline/30 text-center">
+                                </div>
+
+                                <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-full bg-primary text-on-primary font-label-md text-label-md font-semibold shadow-[0_6px_16px_-2px_rgba(159,60,22,0.35)] hover:bg-primary-container hover:shadow-lg transition-all">
+                                    <span class="material-symbols-outlined text-[20px]">shopping_cart</span>
+                                    <span>Tambah ke Keranjang</span>
+                                </button>
+                            </form>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="hidden fixed inset-0 z-50 flex items-center justify-center modal-overlay p-4">
+        <div class="modal-content w-full max-w-3xl max-h-[90vh] overflow-y-auto rounded-3xl bg-surface-container-lowest shadow-2xl border border-surface-container-high">
+            <div class="flex items-center justify-between p-6 border-b border-surface-container-high">
+                <h3 class="text-2xl font-bold text-on-surface">Keranjang Belanja</h3>
+                <button onclick="closeModal('cartModal')" class="text-on-surface-variant hover:text-on-surface transition-colors">
+                    <span class="material-symbols-outlined text-[28px]">close</span>
+                </button>
+            </div>
+
+            <div class="p-6">
+                <div id="cartContent">
+                    <!-- Cart content will be rendered by JavaScript -->
                 </div>
             </div>
         </div>
@@ -642,6 +717,20 @@
             const productCountEl = document.getElementById('productCount');
             let currentFilter = 'all';
 
+            // Load categories from API if available
+            loadCategories();
+
+            function loadCategories() {
+                fetch('<?= base_url('api/kategori') ?>')
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.length > 0) {
+                            // Categories loaded successfully
+                        }
+                    })
+                    .catch(err => console.log('No categories API available'));
+            }
+
             function updateCatalog() {
                 const query = (searchInput.value || '').toLowerCase().trim();
                 let visibleCount = 0;
@@ -682,239 +771,384 @@
             if (searchInput) {
                 searchInput.addEventListener('input', updateCatalog);
             }
+
+            // Search functionality
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        const query = this.value.trim();
+                        if (query) {
+                            window.location.href = '<?= base_url('search') ?>?q=' + encodeURIComponent(query);
+                        }
+                    }
+                });
+            }
         })();
 
-        function openAddModal() {
-            document.getElementById('formMode').value = 'tambah';
-            document.getElementById('formModalTitle').textContent = 'Tambah Produk';
-            document.getElementById('produkForm').action = '/tambah';
-            document.getElementById('produkForm').reset();
-            document.getElementById('formModal').classList.remove('hidden');
-        }
-
-        function openEditModal(produk) {
-            document.getElementById('formMode').value = 'edit';
-            document.getElementById('formModalTitle').textContent = 'Edit Produk';
-            document.getElementById('produkForm').action = '/edit-produk/' + (produk.id_produk || produk.id);
-
-            document.getElementById('nama_produk').value = produk.nama_produk || '';
-            document.getElementById('kategori').value = produk.kategori || 'Keramik';
-            document.getElementById('harga').value = produk.harga || 0;
-            document.getElementById('stok').value = produk.stok || 0;
-            document.getElementById('gambar').value = produk.gambar || '';
-            document.getElementById('deskripsi').value = produk.deskripsi || '';
-            document.getElementById('status').value = produk.status || 'aktif';
-
-            document.getElementById('formModal').classList.remove('hidden');
-        }
-
-        function openDetailModal(produk) {
-            try {
-                if (!produk || typeof produk !== 'object') {
-                    throw new Error('Data produk tidak valid');
-                }
-
-                const nama = produk.nama_produk || 'Nama Produk';
-                const kategori = produk.kategori || 'Umum';
-                const deskripsi = produk.deskripsi || 'Tidak ada deskripsi tersedia.';
-                const harga = Number(produk.harga) || 0;
-                const stok = Number(produk.stok) || 0;
-                const status = produk.status || 'non-aktif';
-
-                const namaEl = document.getElementById('detailNama');
-                const kategoriEl = document.getElementById('detailKategori');
-                const deskripsiEl = document.getElementById('detailDeskripsi');
-                const hargaEl = document.getElementById('detailHarga');
-                const stokEl = document.getElementById('detailStok');
-                const statusEl = document.getElementById('detailStatus');
-                const modal = document.getElementById('detailModal');
-
-                if (!modal) {
-                    throw new Error('Element #detailModal tidak ditemukan');
-                }
-
-                if (namaEl) namaEl.textContent = nama;
-                if (kategoriEl) kategoriEl.textContent = kategori;
-                if (deskripsiEl) deskripsiEl.textContent = deskripsi;
-                if (hargaEl) hargaEl.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(harga);
-                if (stokEl) stokEl.textContent = stok + ' unit';
-
-                if (statusEl) {
-                    statusEl.innerHTML = status === 'aktif' ?
-                        '<span class="px-3 py-1 rounded-full text-xs font-semibold bg-primary-container text-on-primary-container">Aktif</span>' :
-                        '<span class="px-3 py-1 rounded-full text-xs font-semibold bg-surface-container-high/60 text-on-surface-variant">Non-aktif</span>';
-                }
-
-                // Handling render Gambar / Placeholder tanpa Teks Font Meluap
-                const container = document.getElementById('detailImageContainer');
-                if (container) {
-                    container.innerHTML = ''; // Kosongkan isi kontainer agar tidak menumpuk
-
-                    let imageUrl = String(produk.gambar || '').trim();
-
-                    if (imageUrl) {
-                        let finalSrc = imageUrl;
-                        if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
-                            finalSrc = '<?= base_url() ?>/' + imageUrl.replace(/^\/+/, '');
-                        }
-
-                        // Buat elemen gambar secara dinamis
-                        const img = document.createElement('img');
-                        img.id = 'detailImage';
-                        img.src = finalSrc;
-                        img.alt = nama;
-                        img.className = 'w-full h-full object-cover transition-transform duration-300 hover:scale-105';
-
-                        // Jika URL gambar error/rusak, ganti isi kontainer dengan fallback
-                        img.onerror = function() {
-                            container.innerHTML = `
-                <div class="w-full h-full flex flex-col items-center justify-center text-on-surface-variant/50 bg-surface-container-high/40 p-6 text-center select-none">
-                    <span class="text-5xl mb-2">🪴</span>
-                    <span class="text-xs font-medium text-outline">Gambar tidak tersedia</span>
-                </div>`;
-                        };
-
-                        container.appendChild(img);
-                    } else {
-                        // Tampilan jika produk tidak memiliki URL gambar sama sekali
-                        container.innerHTML = `
-            <div class="w-full h-full flex flex-col items-center justify-center text-on-surface-variant/50 bg-surface-container-high/40 p-6 text-center select-none">
-                <span class="text-5xl mb-2">🪴</span>
-                <span class="text-xs font-medium text-outline">Gambar tidak tersedia</span>
-            </div>`;
+        // Cart functions
+        function updateCartCount() {
+            fetch('<?= base_url('cart') ?>')
+                .then(response => response.json())
+                .then(data => {
+                    const countEl = document.getElementById('cart-count');
+                    if (countEl) {
+                        countEl.textContent = data.cart_count;
                     }
+                });
+        }
+
+        function openCart() {
+            fetch('<?= base_url('cart') ?>')
+                .then(response => response.json())
+                .then(data => {
+                    const cartContent = document.getElementById('cartContent');
+                    const cart = data.cart;
+
+                    if (!cart || Object.keys(cart).length === 0) {
+                        cartContent.innerHTML = `
+                            <div class="text-center py-8">
+                                <div class="text-4xl mb-3">🛒</div>
+                                <h4 class="font-bold mb-2">Keranjang Kosong</h4>
+                                <p class="text-on-surface-variant mb-4">Belum ada produk di keranjang Anda</p>
+                                <a href="<?= base_url('katalog') ?>" class="inline-block px-4 py-2 rounded-full bg-primary text-white font-medium">
+                                    Lanjutkan Belanja
+                                </a>
+                            </div>
+                        `;
+                    } else {
+                        let subtotal = 0;
+                        let html = `
+                            <div class="space-y-3">
+                                ${Object.keys(cart).map(id => {
+                                    subtotal += cart[id].subtotal;
+                                    return `
+                                        <div class="flex items-center gap-3 p-3 border border-gray-100 rounded-2xl">
+                                            ${cart[id].gambar ? `<img src="${cart[id].gambar}" alt="${cart[id].nama_produk}" class="w-16 h-16 rounded-lg object-cover">` : '<div class="w-16 h-16 rounded-lg bg-gray-100 flex items-center justify-center text-2xl">🪴</div>'}
+                                            <div class="flex-1">
+                                                <h4 class="font-medium text-sm">${cart[id].nama_produk}</h4>
+                                                <p class="text-xs text-on-surface-variant">Rp ${cart[id].harga.toLocaleString('id-ID')}</p>
+                                                <div class="flex items-center gap-2 mt-1">
+                                                    <button type="button" onclick="updateCartItem('${id}', ${cart[id].quantity - 1})" class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-sm">-</button>
+                                                    <span class="text-sm font-medium">${cart[id].quantity}</span>
+                                                    <button type="button" onclick="updateCartItem('${id}', ${cart[id].quantity + 1})" class="w-6 h-6 rounded-full bg-gray-100 flex items-center justify-center text-sm">+</button>
+                                                </div>
+                                            </div>
+                                            <span class="font-bold text-sm">Rp ${cart[id].subtotal.toLocaleString('id-ID')}</span>
+                                            <button type="button" onclick="removeCartItem('${id}')" class="text-red-500 hover:text-red-700">
+                                                <span class="material-symbols-outlined text-sm">delete</span>
+                                            </button>
+                                        </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                            <div class="border-t border-gray-100 pt-4">
+                                <div class="flex justify-between items-center mb-4">
+                                    <span class="text-lg font-bold">Subtotal</span>
+                                    <span class="text-lg font-bold">Rp ${subtotal.toLocaleString('id-ID')}</span>
+                                </div>
+                                <a href="<?= base_url('checkout') ?>" class="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-full bg-primary text-white font-semibold">
+                                    <span>Checkout Sekarang</span>
+                                    <span class="material-symbols-outlined">arrow_forward</span>
+                                </a>
+                                <button onclick="closeModal('cartModal')" class="w-full mt-2 text-center text-sm text-on-surface-variant underline">Lanjutkan belanja</button>
+                            </div>
+                        `;
+                    }
+
+                    document.getElementById('cartModal').classList.remove('hidden');
+                });
+            }
+
+            function updateCartItem(productId, quantity) {
+                if (quantity <= 0) {
+                    removeCartItem(productId);
+                    return;
                 }
 
-                modal.classList.remove('hidden');
-
-            } catch (error) {
-                console.error('Error opening detail modal:', error);
-                alert('Terjadi kesalahan saat menampilkan detail produk.\n\n' + error.message);
+                fetch('<?= base_url('cart/update') ?>', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id_produk: productId,
+                        quantity: quantity
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        updateCartCount();
+                        openCart(); // Refresh cart display
+                    }
+                });
             }
-        }
 
-        function performLogout() {
-            if (confirm('Apakah Anda yakin ingin logout?')) {
-                window.location.href = '/logout';
+            function removeCartItem(productId) {
+                fetch('<?= base_url('cart/remove') ?>', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        id_produk: productId
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        updateCartCount();
+                        openCart(); // Refresh cart display
+                    }
+                });
             }
-        }
 
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.classList.add('hidden');
+            function openAddModal() {
+                document.getElementById('formMode').value = 'tambah';
+                document.getElementById('formModalTitle').textContent = 'Tambah Produk';
+                document.getElementById('produkForm').action = '/tambah';
+                document.getElementById('produkForm').reset();
+                document.getElementById('formModal').classList.remove('hidden');
             }
-        }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelectorAll('.modal-overlay').forEach(function(modal) {
-                modal.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        this.classList.add('hidden');
+            function openEditModal(produk) {
+                document.getElementById('formMode').value = 'edit';
+                document.getElementById('formModalTitle').textContent = 'Edit Produk';
+                document.getElementById('produkForm').action = '/edit-produk/' + (produk.id_produk || produk.id);
+
+                document.getElementById('nama_produk').value = produk.nama_produk || '';
+                document.getElementById('kategori').value = produk.kategori || 'Keramik';
+                document.getElementById('harga').value = produk.harga || 0;
+                document.getElementById('stok').value = produk.stok || 0;
+                document.getElementById('gambar').value = produk.gambar || '';
+                document.getElementById('deskripsi').value = produk.deskripsi || '';
+                document.getElementById('status').value = produk.status || 'aktif';
+
+                document.getElementById('formModal').classList.remove('hidden');
+            }
+
+            function openDetailModal(produk) {
+                try {
+                    if (!produk || typeof produk !== 'object') {
+                        throw new Error('Data produk tidak valid');
+                    }
+
+                    const nama = produk.nama_produk || 'Nama Produk';
+                    const kategori = produk.kategori || 'Umum';
+                    const deskripsi = produk.deskripsi || 'Tidak ada deskripsi tersedia.';
+                    const harga = Number(produk.harga) || 0;
+                    const stok = Number(produk.stok) || 0;
+                    const status = produk.status || 'non aktif';
+
+                    const namaEl = document.getElementById('detailNama');
+                    const kategoriEl = document.getElementById('detailKategori');
+                    const deskripsiEl = document.getElementById('detailDeskripsi');
+                    const hargaEl = document.getElementById('detailHarga');
+                    const stokEl = document.getElementById('detailStok');
+                    const statusEl = document.getElementById('detailStatus');
+                    const modal = document.getElementById('detailModal');
+
+                    if (!modal) {
+                        throw new Error('Element #detailModal tidak ditemukan');
+                    }
+
+                    if (namaEl) namaEl.textContent = nama;
+                    if (kategoriEl) kategoriEl.textContent = kategori;
+                    if (deskripsiEl) deskripsiEl.textContent = deskripsi;
+                    if (hargaEl) hargaEl.textContent = 'Rp ' + new Intl.NumberFormat('id-ID').format(harga);
+                    if (stokEl) stokEl.textContent = stok + ' unit';
+
+                    if (statusEl) {
+                        statusEl.innerHTML = status === 'aktif' ?
+                            '<span class="px-3 py-1 rounded-full text-xs font-semibold bg-primary-container text-on-primary-container">Aktif</span>' :
+                            '<span class="px-3 py-1 rounded-full text-xs font-semibold bg-surface-container-high/60 text-on-surface-variant">Non aktif</span>';
+                    }
+
+                    // Set hidden inputs for add to cart
+                    document.getElementById('addToCartId').value = produk.id_produk || produk.id;
+                    document.getElementById('addToCartGambar').value = produk.gambar || '';
+                    document.getElementById('addToCartNama').value = nama;
+                    document.getElementById('addToCartKategori').value = kategori;
+                    document.getElementById('addToCartHarga').value = harga;
+                    document.getElementById('addToCartStok').value = stok;
+
+                    // Handling render Gambar / Placeholder tanpa Teks Font Meluap
+                    const container = document.getElementById('detailImageContainer');
+                    if (container) {
+                        container.innerHTML = ''; // Kosongkan isi kontainer agar tidak menumpuk
+
+                        let imageUrl = String(produk.gambar || '').trim();
+
+                        if (imageUrl) {
+                            let finalSrc = imageUrl;
+                            if (!imageUrl.startsWith('http://') && !imageUrl.startsWith('https://')) {
+                                finalSrc = '<?= base_url() ?>/' + imageUrl.replace(/^\/+/, '');
+                            }
+
+                            // Buat elemen gambar secara dinamis
+                            const img = document.createElement('img');
+                            img.id = 'detailImage';
+                            img.src = finalSrc;
+                            img.alt = nama;
+                            img.className = 'w-full h-full object-cover transition-transform duration-300 hover:scale-105';
+
+                            // Jika URL gambar error/rusak, ganti isi kontainer dengan fallback
+                            img.onerror = function() {
+                                container.innerHTML = `
+                            <div class="w-full h-full flex flex-col items-center justify-center text-on-surface-variant/50 bg-surface-container-high/40 p-6 text-center select-none">
+                                <span class="text-5xl mb-2">🪴</span>
+                                <span class="text-xs font-medium text-outline">Gambar tidak tersedia</span>
+                            </div>`;
+                            };
+
+                            container.appendChild(img);
+                        } else {
+                            // Tampilan jika produk tidak memiliki URL gambar sama sekali
+                            container.innerHTML = `
+                    <div class="w-full h-full flex flex-col items-center justify-center text-on-surface-variant/50 bg-surface-container-high/40 p-6 text-center select-none">
+                        <span class="text-5xl mb-2">🪴</span>
+                        <span class="text-xs font-medium text-outline">Gambar tidak tersedia</span>
+                    </div>`;
+                        }
+                    }
+
+                    modal.classList.remove('hidden');
+
+                } catch (error) {
+                    console.error('Error opening detail modal:', error);
+                    alert('Terjadi kesalahan saat menampilkan detail produk.\n\n' + error.message);
+                }
+            }
+
+            function performLogout() {
+                if (confirm('Apakah Anda yakin ingin logout?')) {
+                    window.location.href = '/logout';
+                }
+            }
+
+            function closeModal(modalId) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.add('hidden');
+                }
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                document.querySelectorAll('.modal-overlay').forEach(function(modal) {
+                    modal.addEventListener('click', function(e) {
+                        if (e.target === this) {
+                            this.classList.add('hidden');
+                        }
+                    });
+                });
+
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') {
+                        document.querySelectorAll('.modal-overlay').forEach(function(modal) {
+                            modal.classList.add('hidden');
+                        });
                     }
                 });
             });
 
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    document.querySelectorAll('.modal-overlay').forEach(function(modal) {
-                        modal.classList.add('hidden');
-                    });
-                }
+            // Update cart count on page load
+            document.addEventListener('DOMContentLoaded', function() {
+                updateCartCount();
             });
-        });
 
-        setTimeout(function() {
-            const notif = document.getElementById('flash-notification');
-            if (notif) {
-                notif.style.opacity = '0';
-                notif.style.transform = 'translateY(-20px)';
-                notif.style.transition = 'all 0.4s ease';
-                setTimeout(function() {
-                    notif.remove();
-                }, 400);
-            }
-        }, 4000);
+            // Auto-close notification
+            setTimeout(function() {
+                const notif = document.getElementById('flash-notification');
+                if (notif) {
+                    notif.style.opacity = '0';
+                    notif.style.transform = 'translateY(-20px)';
+                    notif.style.transition = 'all 0.4s ease';
+                    setTimeout(function() {
+                        notif.remove();
+                    }, 400);
+                }
+            }, 4000);
 
-        setTimeout(function() {
-            const notif = document.getElementById('flash-notification-error');
-            if (notif) {
-                notif.style.opacity = '0';
-                notif.style.transform = 'translateY(-20px)';
-                notif.style.transition = 'all 0.4s ease';
-                setTimeout(function() {
-                    notif.remove();
-                }, 400);
-            }
-        }, 4000);
-    </script>
+            setTimeout(function() {
+                const notif = document.getElementById('flash-notification-error');
+                if (notif) {
+                    notif.style.opacity = '0';
+                    notif.style.transform = 'translateY(-20px)';
+                    notif.style.transition = 'all 0.4s ease';
+                    setTimeout(function() {
+                        notif.remove();
+                    }, 400);
+                }
+            }, 4000);
+        </script>
 
-    <style>
-        .line-clamp-2 {
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .aspect-square {
-            aspect-ratio: 1/1;
-        }
-
-        .aspect-video {
-            aspect-ratio: 16/9;
-        }
-
-        .scrollbar-none {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-
-        .scrollbar-none::-webkit-scrollbar {
-            display: none;
-        }
-
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background-color: rgba(58, 42, 32, 0.7);
-            backdrop-filter: blur(8px);
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-        }
-
-        .modal-overlay:not(.hidden) {
-            display: flex;
-        }
-
-        .modal-overlay.hidden {
-            display: none !important;
-        }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
+        <style>
+            .line-clamp-2 {
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
             }
 
-            to {
-                opacity: 1;
-            }
-        }
-
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px) scale(0.95);
+            .aspect-square {
+                aspect-ratio: 1/1;
             }
 
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
+            .aspect-video {
+                aspect-ratio: 16/9;
             }
-        }
-    </style>
+
+            .scrollbar-none {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+
+            .scrollbar-none::-webkit-scrollbar {
+                display: none;
+            }
+
+            .modal-overlay {
+                position: fixed;
+                inset: 0;
+                background-color: rgba(58, 42, 32, 0.7);
+                backdrop-filter: blur(8px);
+                align-items: center;
+                justify-content: center;
+                z-index: 9999;
+            }
+
+            .modal-overlay:not(.hidden) {
+                display: flex;
+            }
+
+            .modal-overlay.hidden {
+                display: none !important;
+            }
+
+            @keyframes fadeIn {
+                from {
+                    opacity: 0;
+                }
+
+                to {
+                    opacity: 1;
+                }
+            }
+
+            @keyframes slideUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px) scale(0.95);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: translateY(0) scale(1);
+                }
+            }
+        </style>
 </body>
+
 
 </html>
