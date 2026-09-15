@@ -20,6 +20,11 @@ class Login extends Controller
 
         $data['title'] = 'Login - Griya Pot Bunga';
 
+        // TEMPORARY AUDIT MODE: Skip login screen
+        if (env('AUDIT_MODE') === 'true') {
+            return redirect()->to('/katalog');
+        }
+
         // Jika user sudah login, redirect ke katalog
         if (session()->get('logged_in')) {
             return redirect()->to('/katalog');

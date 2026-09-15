@@ -21,6 +21,18 @@ class Toko extends Controller
         $data['user'] = null;
         $data['role'] = null;
 
+        // TEMPORARY AUDIT MODE: Set session data for audit
+        if (env('AUDIT_MODE') === 'true') {
+            if (!session()->get('logged_in')) {
+                session()->set([
+                    'id'         => 1,
+                    'username'   => 'audit_admin',
+                    'role'       => 'admin',
+                    'logged_in'  => true,
+                ]);
+            }
+        }
+
         // Perbaikan: cek logged_in atau role
         if (session()->get('logged_in')) {
             $data['user'] = session()->get('username');
