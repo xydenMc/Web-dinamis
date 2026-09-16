@@ -16,9 +16,10 @@ class CheckSession implements FilterInterface
         }
 
         // Jika ada role argument, cek role user
-        if ($arguments && is_array($arguments)) {
+        if ($arguments) {
+            $allowedRoles = is_array($arguments) ? $arguments : [$arguments];
             $userRole = session()->get('role');
-            if (!in_array($userRole, $arguments)) {
+            if (!in_array($userRole, $allowedRoles)) {
                 return redirect()->to('/katalog')->with('error', 'Anda tidak memiliki akses ke halaman ini.');
             }
         }

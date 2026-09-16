@@ -127,7 +127,7 @@
                     </div>
                 </div>
                 <div>
-                    <h3 class="text-2xl font-bold text-on-surface mb-1"><?= $jumlahTransaksi ?? 0 ?> Transaksi</h3>
+                    <h3 class="text-2xl font-bold text-on-surface mb-1"><?= $jumlahTransaksiSelesai ?? 0 ?> Transaksi</h3>
                     <p class="text-xs text-secondary font-medium flex items-center gap-1">
                         <span class="material-symbols-outlined text-[14px]">check_circle</span>
                         <span>Selesai</span>

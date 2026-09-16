@@ -40,6 +40,21 @@ class Dashboard extends Controller
         $data['jumlahProdukTerjual'] = $this->getTotalProdukTerjual();
         $data['jumlahStokMenipis'] = $this->getStokMenipis();
 
+        // Produk terlaris untuk laporan
+        $builder = $this->db->table('detail_transaksi dt');
+        $builder->select('p.nama_produk, p.kategori, SUM(dt.jumlah) as terjual')
+            ->join('transaksi t', 'dt.id_transaksi = t.id_transaksi')
+            ->join('produk p', 'dt.id_produk = p.id_produk')
+            ->where('t.status', 'Selesai')
+            ->groupBy('dt.id_produk')
+            ->orderBy('terjual', 'DESC')
+            ->limit(10);
+        $produkTerlaris = $builder->get()->getResultArray();
+        $data['produkTerlaris'] = [];
+        foreach ($produkTerlaris as $row) {
+            $data['produkTerlaris'][$row['kategori']] = $row['terjual'];
+        }
+
         // Transaksi terbaru
         $data['transaksiTerbaru'] = $this->transaksiModel->getTransaksiTerbaru(10);
 

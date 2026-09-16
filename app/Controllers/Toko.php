@@ -271,10 +271,14 @@ class Toko extends Controller
         }
 
         $productId = $this->request->getPost('id_produk');
-        $quantity = (int) $this->request->getPost('quantity', 1);
+        $quantity = (int) ($this->request->getPost('quantity') ?? 1);
 
         if (!$productId) {
             return $this->response->setJSON(['status' => 'error', 'message' => 'ID produk tidak diberikan']);
+        }
+
+        if ($quantity <= 0) {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Quantity harus lebih dari 0']);
         }
 
         $produk = $this->produkModel->find($productId);
@@ -283,16 +287,23 @@ class Toko extends Controller
             return $this->response->setJSON(['status' => 'error', 'message' => 'Produk tidak tersedia']);
         }
 
-        // Cek stok
-        if ($quantity > $produk['stok']) {
-            return $this->response->setJSON(['status' => 'error', 'message' => 'Stok tidak mencukupi. Stok tersedia: ' . $produk['stok']]);
-        }
-
         // Ambil atau buat keranjang di session
         $cart = session()->get('cart') ?? [];
 
+        // Hitung quantity total yang akan dimasukkan ke keranjang
+        $newQuantity = $quantity;
         if (isset($cart[$productId])) {
-            $cart[$productId]['quantity'] += $quantity;
+            $newQuantity = $cart[$productId]['quantity'] + $quantity;
+        }
+
+        // Cek stok - quantity baru tidak boleh melebihi stok produk
+        if ($newQuantity > $produk['stok']) {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Stok tidak mencukupi. Stok tersedia: ' . $produk['stok']]);
+        }
+
+        if (isset($cart[$productId])) {
+            $cart[$productId]['quantity'] = $newQuantity;
+            $cart[$productId]['subtotal'] = $cart[$productId]['harga'] * $newQuantity;
         } else {
             $cart[$productId] = [
                 'id_produk' => $productId,
@@ -340,12 +351,20 @@ class Toko extends Controller
             return $this->response->setJSON(['status' => 'error', 'message' => 'Invalid request method']);
         }
 
-        $productId = $this->request->getPost('id_produk');
-        $quantity = (int) $this->request->getPost('quantity');
+        // Dukung input JSON dari JavaScript
+        $input = $this->request->getJSON(true) ?? $this->request->getPost();
+        $productId = $input['id_produk'] ?? null;
+        $quantityPost = $input['quantity'] ?? null;
 
         if (!$productId) {
             return $this->response->setJSON(['status' => 'error', 'message' => 'ID produk tidak diberikan']);
         }
+
+        // Validasi quantity - harus berupa angka positif
+        if ($quantityPost === null || !is_numeric($quantityPost)) {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Quantity tidak valid']);
+        }
+        $quantity = (int) $quantityPost;
 
         $cart = session()->get('cart') ?? [];
 
@@ -353,18 +372,22 @@ class Toko extends Controller
             return $this->response->setJSON(['status' => 'error', 'message' => 'Produk tidak ada di keranjang']);
         }
 
-        // Produk yang dicari
+        // Produk yang dicari untuk cek stok terkini
         $produk = $this->produkModel->find($productId);
+
+        if (!$produk) {
+            return $this->response->setJSON(['status' => 'error', 'message' => 'Produk tidak ditemukan']);
+        }
 
         if ($quantity <= 0) {
             unset($cart[$productId]);
         } else {
-            // Cek stok
-            if ($produk && $quantity > $produk['stok']) {
+            // Cek stok - quantity tidak boleh melebihi stok produk yang aktual
+            if ($quantity > $produk['stok']) {
                 return $this->response->setJSON(['status' => 'error', 'message' => 'Stok tidak mencukupi. Stok tersedia: ' . $produk['stok']]);
             }
             $cart[$productId]['quantity'] = $quantity;
-            $cart[$productId]['subtotal'] = $cart[$productId]['harga'] * $quantity;
+            $cart[$productId]['subtotal'] = $produk['harga'] * $quantity;
         }
 
         session()->set('cart', $cart);
@@ -390,7 +413,9 @@ class Toko extends Controller
             return $this->response->setJSON(['status' => 'error', 'message' => 'Invalid request method']);
         }
 
-        $productId = $this->request->getPost('id_produk');
+        // Dukung input JSON dari JavaScript
+        $input = $this->request->getJSON(true) ?? $this->request->getPost();
+        $productId = $input['id_produk'] ?? null;
 
         if (!$productId) {
             return $this->response->setJSON(['status' => 'error', 'message' => 'ID produk tidak diberikan']);
@@ -513,9 +538,10 @@ class Toko extends Controller
                 ]
             ],
             'metode_pembayaran' => [
-                'rules'  => 'required',
+                'rules'  => 'required|in_list[Transfer Bank,COD (Bayar di Tempat),QRIS (GoPay/OVO/DANA)]',
                 'errors' => [
-                    'required' => 'Metode pembayaran wajib dipilih.'
+                    'required' => 'Metode pembayaran wajib dipilih.',
+                    'in_list' => 'Metode pembayaran tidak valid.'
                 ]
             ]
         ]);

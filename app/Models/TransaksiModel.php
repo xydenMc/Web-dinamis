@@ -91,7 +91,7 @@ class TransaksiModel extends Model
         $detailModel = new DetailTransaksiModel();
         $transaksi = $this->find($id_transaksi);
         if ($transaksi) {
-            $transaksi['detail'] = $detailModel->where('id_transaksi', $id_transaksi)->findAll();
+            $transaksi['detail'] = $detailModel->getDetailWithProduk($id_transaksi);
         }
         return $transaksi;
     }
