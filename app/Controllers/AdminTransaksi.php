@@ -41,13 +41,13 @@ class AdminTransaksi extends Controller
     public function detail($id = null)
     {
         if ($id === null) {
-            return redirect()->to('/transaksi')->with('error', 'ID transaksi tidak diberikan.');
+            return redirect()->to('/admin/transaksi')->with('error', 'ID transaksi tidak diberikan.');
         }
 
         $transaksi = $this->transaksiModel->getTransaksiWithDetails($id);
 
         if (!$transaksi) {
-            return redirect()->to('/transaksi')->with('error', 'Transaksi tidak ditemukan.');
+            return redirect()->to('/admin/transaksi')->with('error', 'Transaksi tidak ditemukan.');
         }
 
         $data['title'] = 'Detail Transaksi - Griya Pot Bunga';
@@ -61,23 +61,23 @@ class AdminTransaksi extends Controller
     public function updateStatus($id = null)
     {
         if ($id === null) {
-            return redirect()->to('/transaksi')->with('error', 'ID transaksi tidak diberikan.');
+            return redirect()->to('/admin/transaksi')->with('error', 'ID transaksi tidak diberikan.');
         }
 
         if ($this->request->getMethod() !== 'POST') {
-            return redirect()->to('/transaksi');
+            return redirect()->to('/admin/transaksi');
         }
 
         $status = $this->request->getPost('status');
 
         $allowedStatuses = ['Pending', 'Diproses', 'Selesai', 'Dibatalkan'];
         if (!in_array($status, $allowedStatuses)) {
-            return redirect()->to('/transaksi')->with('error', 'Status tidak valid.');
+            return redirect()->to('/admin/transaksi')->with('error', 'Status tidak valid.');
         }
 
         $transaksi = $this->transaksiModel->find($id);
         if (!$transaksi) {
-            return redirect()->to('/transaksi')->with('error', 'Transaksi tidak ditemukan.');
+            return redirect()->to('/admin/transaksi')->with('error', 'Transaksi tidak ditemukan.');
         }
 
         // Jika status berubah ke Selesai, stok sudah diupdate sekali saat checkout
@@ -102,6 +102,6 @@ class AdminTransaksi extends Controller
 
         $this->transaksiModel->update($id, ['status' => $status]);
 
-        return redirect()->to('/transaksi')->with('success', 'Status transaksi berhasil diperbarui.');
+        return redirect()->to('/admin/transaksi')->with('success', 'Status transaksi berhasil diperbarui.');
     }
 }

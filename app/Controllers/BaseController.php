@@ -21,6 +21,57 @@ use Psr\Log\LoggerInterface;
 abstract class BaseController extends Controller
 {
     /**
+     * Store display flashdata in its only supported presentation type: string.
+     * Arrays (including validation-like nested arrays) are flattened before they
+     * enter the session, keeping all views safe to pass the result through esc().
+     *
+     * @param mixed $value
+     */
+    protected function setFlashString(string $key, $value, string $separator = ' '): void
+    {
+        helper('flash');
+
+        $normalize = static function ($item) use (&$normalize): array {
+            if ($item === null) {
+                return [];
+            }
+
+            if (is_array($item)) {
+                $parts = [];
+                foreach ($item as $child) {
+                    array_push($parts, ...$normalize($child));
+                }
+
+                return $parts;
+            }
+
+            if (is_bool($item)) {
+                return [$item ? 'true' : 'false'];
+            }
+
+            if (is_scalar($item) || $item instanceof \Stringable) {
+                return [(string) $item];
+            }
+
+            return [];
+        };
+
+        session()->setFlashdata($key, implode($separator, $normalize($value)));
+    }
+
+    /**
+     * Redirect after storing a normalized flash message.
+     *
+     * @param mixed $value
+     */
+    protected function redirectWithFlash(string $uri, string $key, $value)
+    {
+        $this->setFlashString($key, $value);
+
+        return redirect()->to($uri);
+    }
+
+    /**
      * Be sure to declare properties for any property fetch you initialized.
      * The creation of dynamic property is deprecated in PHP 8.2.
      */

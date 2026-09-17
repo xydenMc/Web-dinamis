@@ -74,9 +74,7 @@ class Auth extends BaseController
         session()->set('role', $user['role']);
         session()->set('last_activity', time());
 
-        return redirect()->to('/dashboard')->with('success', [
-            'login' => 'Berhasil login sebagai admin'
-        ]);
+        return $this->redirectWithFlash('/dashboard', 'success', 'Berhasil login sebagai admin');
     }
 
     /**
@@ -85,8 +83,6 @@ class Auth extends BaseController
     public function logout()
     {
         session()->destroy();
-        return redirect()->to('/admin/login')->with('success', [
-            'logout' => 'Berhasil logout'
-        ]);
+        return $this->redirectWithFlash('/admin/login', 'success', 'Berhasil logout');
     }
 }

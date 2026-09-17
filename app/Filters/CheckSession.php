@@ -10,14 +10,16 @@ class CheckSession implements FilterInterface
 {
     public function before(RequestInterface $request, $arguments = null)
     {
+        $allowedRoles = $arguments ? (is_array($arguments) ? $arguments : [$arguments]) : [];
+        $loginRoute = in_array('admin', $allowedRoles, true) ? '/admin/login' : '/login';
+
         // Cek apakah user sudah login
         if (!session()->get('logged_in')) {
-            return redirect()->to('/login')->with('error', 'Anda harus login terlebih dahulu.');
+            return redirect()->to($loginRoute)->with('error', 'Anda harus login terlebih dahulu.');
         }
 
         // Jika ada role argument, cek role user
-        if ($arguments) {
-            $allowedRoles = is_array($arguments) ? $arguments : [$arguments];
+        if ($allowedRoles !== []) {
             $userRole = session()->get('role');
             if (!in_array($userRole, $allowedRoles)) {
                 return redirect()->to('/katalog')->with('error', 'Anda tidak memiliki akses ke halaman ini.');

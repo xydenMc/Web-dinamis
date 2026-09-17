@@ -73,9 +73,7 @@ class Auth extends BaseController
         $redirectUrl = session()->get('login_redirect') ?? '/katalog';
         session()->remove('login_redirect');
 
-        return redirect()->to($redirectUrl)->with('success', [
-            'login' => 'Berhasil login sebagai ' . $user['role']
-        ]);
+        return $this->redirectWithFlash($redirectUrl, 'success', 'Berhasil login sebagai ' . $user['role']);
     }
 
     /**
@@ -141,9 +139,7 @@ class Auth extends BaseController
         );
 
         if ($userId) {
-            return redirect()->to('/login')->with('success', [
-                'register' => 'Akun berhasil dibuat! Silakan login.'
-            ]);
+            return $this->redirectWithFlash('/login', 'success', 'Akun berhasil dibuat! Silakan login.');
         }
 
         return redirect()->to('/register')->with('errors', [
@@ -157,9 +153,7 @@ class Auth extends BaseController
     public function logout()
     {
         session()->destroy();
-        return redirect()->to('/')->with('success', [
-            'logout' => 'Berhasil logout.'
-        ]);
+        return $this->redirectWithFlash('/', 'success', 'Berhasil logout.');
     }
 
     /**

@@ -2,27 +2,18 @@
 
 namespace App\Controllers\Admin;
 
-use CodeIgniter\Controller;
-
-class BaseController extends Controller
+class BaseController extends \App\Controllers\BaseController
 {
     protected $theme = 'Admin Layout';
     protected $themeViewPath = 'admin/views/';
+    protected $db;
 
     public function initController(\CodeIgniter\Http\RequestInterface $request, \CodeIgniter\Http\ResponseInterface $response, \Psr\Log\LoggerInterface $logger)
     {
         parent::initController($request, $response, $logger);
 
-        // Check if user is logged in as admin
-        if (!session()->get('logged_in')) {
-            return redirect()->to('/admin/login');
-        }
-
-        if (session()->get('role') !== 'admin') {
-            session()->destroy();
-            return redirect()->to('/admin/login')->with('errors', [
-                'access' => 'Anda tidak memiliki akses ke area admin'
-            ]);
-        }
+        // Dashboard uses this connection for aggregate statistics. Access
+        // control is handled reliably before the controller by `role:admin`.
+        $this->db = db_connect();
     }
 }

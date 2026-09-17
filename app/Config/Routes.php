@@ -34,9 +34,11 @@ $routes->get('/produk/(:num)', 'Toko::detail/$1');
 // CART ROUTES (LOGIN REQUIRED)
 // ============================================================================
 
-// Session cart used by the storefront.
+// Session cart used by the storefront. The page and JSON API deliberately use
+// separate URLs so `/cart` always renders HTML for users.
+$routes->get('/cart', 'Toko::cart');
+$routes->get('/api/cart', 'Toko::getCart');
 $routes->post('/cart/add', 'Toko::addToCart');
-$routes->get('/cart', 'Toko::getCart');
 $routes->post('/cart/update', 'Toko::updateCart');
 $routes->post('/cart/remove', 'Toko::removeFromCart');
 $routes->post('/cart/clear', 'Toko::clearCart');
@@ -48,6 +50,7 @@ $routes->post('/cart/clear', 'Toko::clearCart');
 // Checkout performs its own login check before showing or processing the form.
 $routes->get('/checkout', 'Toko::checkout');
 $routes->post('/checkout/process', 'Toko::processCheckout');
+$routes->get('/pesanan/sukses', 'Toko::orderSuccess');
 
 // ============================================================================
 // ADMIN ROUTES
@@ -62,10 +65,16 @@ $routes->get('/admin/logout', 'Admin\Auth::logout');
 $routes->get('/dashboard', 'Admin\Dashboard::index', ['filter' => 'role:admin']);
 
 // Admin transactions
-$routes->get('/admin/transaksi', 'Admin\Transaction::index', ['filter' => 'role:admin']);
-$routes->get('/admin/transaksi/(:num)', 'Admin\Transaction::detail/$1', ['filter' => 'role:admin']);
-$routes->post('/admin/transaksi/update-status/(:num)', 'Admin\Transaction::updateStatus/$1', ['filter' => 'role:admin']);
-$routes->post('/admin/transaksi/cancel/(:num)', 'Admin\Transaction::cancel/$1', ['filter' => 'role:admin']);
+// Checkout storefront writes to the legacy `transaksi` / `detail_transaksi`
+// tables, so the admin page must use the matching controller and schema.
+$routes->get('/admin/transaksi', 'AdminTransaksi::index', ['filter' => 'role:admin']);
+$routes->get('/admin/transaksi/(:num)', 'AdminTransaksi::detail/$1', ['filter' => 'role:admin']);
+$routes->post('/admin/transaksi/update-status/(:num)', 'AdminTransaksi::updateStatus/$1', ['filter' => 'role:admin']);
+
+// Backward-compatible URLs used by older transaction views.
+$routes->get('/transaksi', 'AdminTransaksi::index', ['filter' => 'role:admin']);
+$routes->get('/transaksi/(:num)', 'AdminTransaksi::detail/$1', ['filter' => 'role:admin']);
+$routes->post('/transaksi/update-status/(:num)', 'AdminTransaksi::updateStatus/$1', ['filter' => 'role:admin']);
 
 // Admin reports
 $routes->get('/admin/laporan', 'Admin\Report::index', ['filter' => 'role:admin']);

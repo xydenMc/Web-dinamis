@@ -33,23 +33,23 @@
 </head>
 <body class="bg-background font-body-md text-on-surface min-h-screen">
     <!-- Flashdata Notifications -->
-    <?php if (session()->getFlashdata('success')): ?>
+    <?php if ($successMessage = flash_message('success')): ?>
         <div class="fixed top-20 right-4 z-50 flex items-center gap-3 px-6 py-3 rounded-lg bg-green-500 text-white shadow-lg">
             <span class="material-symbols-outlined">check_circle</span>
-            <span><?= esc(session()->getFlashdata('success')) ?></span>
+            <span><?= esc($successMessage) ?></span>
         </div>
     <?php endif; ?>
-    <?php if (session()->getFlashdata('error')): ?>
+    <?php if ($errorMessage = flash_message('error')): ?>
         <div class="fixed top-20 right-4 z-50 flex items-center gap-3 px-6 py-3 rounded-lg bg-red-500 text-white shadow-lg">
             <span class="material-symbols-outlined">error_circle</span>
-            <span><?= esc(session()->getFlashdata('error')) ?></span>
+            <span><?= esc($errorMessage) ?></span>
         </div>
     <?php endif; ?>
 
     <header class="bg-surface-container-lowest/65 backdrop-blur-2xl rounded-full shadow-lg mx-auto mt-4 mb-4">
         <div class="flex items-center justify-between px-6 py-4">
             <div class="flex items-center gap-3">
-                <a href="<?= base_url('dashboard') ?>" class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
+                    <a href="<?= base_url('dashboard') ?>" class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
                     <span class="material-symbols-outlined">dashboard</span>
                 </a>
                 <h1 class="text-xl font-bold">Kelola Transaksi</h1>
@@ -96,7 +96,7 @@
                                 <?php foreach ($transaksis as $transaksi): ?>
                                     <tr class="border-b border-gray-100 hover:bg-gray-50">
                                         <td class="px-4 py-3 font-medium text-on-surface">
-                                            <a href="<?= base_url('transaksi/' . $transaksi['id_transaksi']) ?>" class="text-primary hover:underline">
+                                            <a href="<?= base_url('admin/transaksi/' . $transaksi['id_transaksi']) ?>" class="text-primary hover:underline">
                                                 <?= esc($transaksi['nomor_transaksi']) ?>
                                             </a>
                                         </td>
@@ -118,7 +118,7 @@
                                             <?php endif; ?>
                                         </td>
                                         <td class="px-4 py-3 text-center">
-                                            <a href="<?= base_url('transaksi/' . $transaksi['id_transaksi']) ?>" class="text-primary hover:text-primary-container">Detail</a>
+                                            <a href="<?= base_url('admin/transaksi/' . $transaksi['id_transaksi']) ?>" class="text-primary hover:text-primary-container">Detail</a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>

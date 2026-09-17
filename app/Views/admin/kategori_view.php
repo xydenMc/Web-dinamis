@@ -33,16 +33,16 @@
 </head>
 <body class="bg-background font-body-md text-on-surface min-h-screen">
     <!-- Flashdata Notifications -->
-    <?php if (session()->getFlashdata('success')): ?>
+    <?php if ($successMessage = flash_message('success')): ?>
         <div class="fixed top-20 right-4 z-50 flex items-center gap-3 px-6 py-3 rounded-lg bg-green-500 text-white shadow-lg">
             <span class="material-symbols-outlined">check_circle</span>
-            <span><?= esc(session()->getFlashdata('success')) ?></span>
+            <span><?= esc($successMessage) ?></span>
         </div>
     <?php endif; ?>
-    <?php if (session()->getFlashdata('error')): ?>
+    <?php if ($errorMessage = flash_message('error')): ?>
         <div class="fixed top-20 right-4 z-50 flex items-center gap-3 px-6 py-3 rounded-lg bg-red-500 text-white shadow-lg">
             <span class="material-symbols-outlined">error_circle</span>
-            <span><?= esc(session()->getFlashdata('error')) ?></span>
+            <span><?= esc($errorMessage) ?></span>
         </div>
     <?php endif; ?>
 

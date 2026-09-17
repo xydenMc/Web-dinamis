@@ -196,10 +196,10 @@
 
 <body class="bg-background font-body-md text-on-surface min-h-screen relative selection:bg-primary-fixed selection:text-on-primary-fixed">
     <!-- Flashdata Notification -->
-    <?php if (session()->getFlashdata('success')): ?>
+    <?php if ($successMessage = flash_message('success')): ?>
         <div id="flash-notification" class="fixed top-20 right-4 z-50 flex items-center gap-3 px-6 py-3 rounded-lg bg-green-500 text-white shadow-lg animate-slideDown">
             <span class="material-symbols-outlined text-[18px]">check_circle</span>
-            <span class="font-semibold"><?= esc(session()->getFlashdata('success')) ?></span>
+            <span class="font-semibold"><?= esc($successMessage) ?></span>
             <button onclick="document.getElementById('flash-notification').remove()" class="ml-2 text-white hover:text-green-200">
                 <span class="material-symbols-outlined text-[16px]">close</span>
             </button>
@@ -219,10 +219,10 @@
         </style>
     <?php endif; ?>
 
-    <?php if (session()->getFlashdata('error')): ?>
+    <?php if ($errorMessage = flash_message('error')): ?>
         <div id="flash-notification-error" class="fixed top-20 right-4 z-50 flex items-center gap-3 px-6 py-3 rounded-lg bg-red-500 text-white shadow-lg animate-slideDown">
             <span class="material-symbols-outlined text-[18px]">error_circle</span>
-            <span class="font-semibold"><?= esc(session()->getFlashdata('error')) ?></span>
+            <span class="font-semibold"><?= esc($errorMessage) ?></span>
             <button onclick="document.getElementById('flash-notification-error').remove()" class="ml-2 text-white hover:text-red-200">
                 <span class="material-symbols-outlined text-[16px]">close</span>
             </button>
@@ -787,7 +787,7 @@
 
         // Cart functions
         function updateCartCount() {
-            fetch('<?= base_url('cart') ?>')
+            fetch('<?= base_url('api/cart') ?>')
                 .then(response => response.json())
                 .then(data => {
                     const countEl = document.getElementById('cart-count');
@@ -798,7 +798,7 @@
         }
 
         function openCart() {
-            fetch('<?= base_url('cart') ?>')
+            fetch('<?= base_url('api/cart') ?>')
                 .then(response => response.json())
                 .then(data => {
                     const cartContent = document.getElementById('cartContent');

@@ -6,9 +6,8 @@ use App\Models\ProdukModel;
 use App\Models\KategoriModel;
 use App\Models\TransaksiModel;
 use App\Models\DetailTransaksiModel;
-use CodeIgniter\Controller;
 
-class Toko extends Controller
+class Toko extends BaseController
 {
     protected $produkModel;
     protected $kategoriModel;
@@ -172,7 +171,7 @@ class Toko extends Controller
 
                 $this->produkModel->insert($data);
 
-                return redirect()->to('/katalog')->with('success', 'Produk berhasil ditambahkan.');
+                return $this->redirectWithFlash('/katalog', 'success', 'Produk berhasil ditambahkan.');
             } else {
                 return redirect()->to('/katalog')->with('errors', $this->validator->getErrors());
             }
@@ -191,10 +190,10 @@ class Toko extends Controller
 
         if ($produk) {
             $this->produkModel->delete($id);
-            return redirect()->to('/katalog')->with('success', 'Produk berhasil dihapus.');
+            return $this->redirectWithFlash('/katalog', 'success', 'Produk berhasil dihapus.');
         }
 
-        return redirect()->to('/katalog')->with('error', 'Produk tidak ditemukan.');
+        return $this->redirectWithFlash('/katalog', 'error', 'Produk tidak ditemukan.');
     }
 
     public function edit($id = null)
@@ -247,7 +246,7 @@ class Toko extends Controller
 
                     $this->produkModel->update($id, $data);
 
-                    return redirect()->to('/katalog')->with('success', 'Produk berhasil diperbarui.');
+                    return $this->redirectWithFlash('/katalog', 'success', 'Produk berhasil diperbarui.');
                 } else {
                     return redirect()->to('/katalog')->with('errors', $this->validator->getErrors());
                 }
@@ -258,7 +257,7 @@ class Toko extends Controller
             return view('toko_view', $data);
         }
 
-        return redirect()->to('/katalog')->with('error', 'Produk tidak ditemukan.');
+        return $this->redirectWithFlash('/katalog', 'error', 'Produk tidak ditemukan.');
     }
 
     // ==========================================
@@ -267,24 +266,24 @@ class Toko extends Controller
     public function addToCart()
     {
         if ($this->request->getMethod() !== 'POST') {
-            return $this->response->setJSON(['status' => 'error', 'message' => 'Invalid request method']);
+            return $this->redirectWithFlash('/katalog', 'error', 'Metode permintaan tidak valid.');
         }
 
         $productId = $this->request->getPost('id_produk');
         $quantity = (int) ($this->request->getPost('quantity') ?? 1);
 
         if (!$productId) {
-            return $this->response->setJSON(['status' => 'error', 'message' => 'ID produk tidak diberikan']);
+            return $this->redirectWithFlash('/katalog', 'error', 'Produk tidak dipilih.');
         }
 
         if ($quantity <= 0) {
-            return $this->response->setJSON(['status' => 'error', 'message' => 'Quantity harus lebih dari 0']);
+            return $this->redirectWithFlash('/katalog', 'error', 'Jumlah produk harus lebih dari 0.');
         }
 
         $produk = $this->produkModel->find($productId);
 
         if (!$produk || $produk['status'] !== 'aktif') {
-            return $this->response->setJSON(['status' => 'error', 'message' => 'Produk tidak tersedia']);
+            return $this->redirectWithFlash('/katalog', 'error', 'Produk tidak tersedia.');
         }
 
         // Ambil atau buat keranjang di session
@@ -298,7 +297,7 @@ class Toko extends Controller
 
         // Cek stok - quantity baru tidak boleh melebihi stok produk
         if ($newQuantity > $produk['stok']) {
-            return $this->response->setJSON(['status' => 'error', 'message' => 'Stok tidak mencukupi. Stok tersedia: ' . $produk['stok']]);
+            return $this->redirectWithFlash('/katalog', 'error', 'Stok tidak mencukupi. Stok tersedia: ' . $produk['stok']);
         }
 
         if (isset($cart[$productId])) {
@@ -318,13 +317,7 @@ class Toko extends Controller
 
         session()->set('cart', $cart);
 
-        $cartCount = array_sum(array_column($cart, 'quantity'));
-
-        return $this->response->setJSON([
-            'status' => 'success',
-            'message' => 'Produk berhasil ditambahkan ke keranjang',
-            'cart_count' => $cartCount
-        ]);
+        return $this->redirectWithFlash('/cart', 'success', 'Produk berhasil ditambahkan ke keranjang.');
     }
 
     public function getCart()
@@ -342,6 +335,22 @@ class Toko extends Controller
             'cart' => $cart,
             'cart_count' => $cartCount,
             'subtotal' => $subtotal
+        ]);
+    }
+
+    /**
+     * Halaman keranjang untuk storefront berbasis session.
+     */
+    public function cart()
+    {
+        $cart = session()->get('cart') ?? [];
+        $subtotal = array_sum(array_column($cart, 'subtotal'));
+
+        return view('cart_view', [
+            'title' => 'Keranjang Belanja - Griya Pot Bunga',
+            'cart' => $cart,
+            'subtotal' => $subtotal,
+            'totalItem' => array_sum(array_column($cart, 'quantity')),
         ]);
     }
 
@@ -484,13 +493,13 @@ class Toko extends Controller
     public function checkout()
     {
         if (!session()->get('logged_in')) {
-            return redirect()->to('/login')->with('error', 'Anda harus login untuk checkout.');
+            return $this->redirectWithFlash('/login', 'error', 'Anda harus login untuk checkout.');
         }
 
         $cart = session()->get('cart') ?? [];
 
         if (empty($cart)) {
-            return redirect()->to('/katalog')->with('error', 'Keranjang belanja kosong.');
+            return $this->redirectWithFlash('/katalog', 'error', 'Keranjang belanja kosong.');
         }
 
         $data['cart'] = $cart;
@@ -513,7 +522,7 @@ class Toko extends Controller
     public function processCheckout()
     {
         if (!session()->get('logged_in')) {
-            return redirect()->to('/login')->with('error', 'Anda harus login untuk checkout.');
+            return $this->redirectWithFlash('/login', 'error', 'Anda harus login untuk checkout.');
         }
 
         if ($this->request->getMethod() !== 'POST') {
@@ -553,7 +562,7 @@ class Toko extends Controller
         $cart = session()->get('cart') ?? [];
 
         if (empty($cart)) {
-            return redirect()->to('/katalog')->with('error', 'Keranjang belanja kosong.');
+            return $this->redirectWithFlash('/katalog', 'error', 'Keranjang belanja kosong.');
         }
 
         // Generate nomor transaksi unik
@@ -581,34 +590,80 @@ class Toko extends Controller
             'nomor_telepon' => $this->request->getPost('nomor_telepon')
         ];
 
-        $transaksiId = $this->transaksiModel->insert($transaksiData);
-
-        if (!$transaksiId) {
-            return redirect()->to('/checkout')->with('error', 'Gagal menyimpan transaksi.');
+        // Validasi ulang stok dari database agar stok yang berubah setelah
+        // produk masuk keranjang tidak menghasilkan pesanan yang tidak valid.
+        $currentProducts = [];
+        foreach ($cart as $item) {
+            $product = $this->produkModel->find($item['id_produk']);
+            if (!$product || $product['status'] !== 'aktif' || (int) $product['stok'] < (int) $item['quantity']) {
+                return $this->redirectWithFlash('/cart', 'error', 'Salah satu produk sudah tidak tersedia atau stoknya tidak mencukupi.');
+            }
+            $currentProducts[$item['id_produk']] = $product;
         }
 
-        // Simpan detail transaksi dan update stok
-        foreach ($cart as $productId => $item) {
-            $detailData = [
-                'id_transaksi' => $transaksiId,
-                'id_produk' => $item['id_produk'],
-                'jumlah' => $item['quantity'],
-                'harga_satuan' => $item['harga'],
-                'subtotal' => $item['subtotal']
-            ];
+        // Header transaksi, detail, dan pengurangan stok harus tersimpan
+        // bersama-sama. Jika salah satunya gagal, semuanya dibatalkan.
+        $db = db_connect();
+        $db->transBegin();
 
-            $this->detailTransaksiModel->insert($detailData);
+        try {
+            $transaksiId = $this->transaksiModel->insert($transaksiData);
+            if (!$transaksiId) {
+                throw new \RuntimeException('Header transaksi tidak dapat disimpan.');
+            }
 
-            // Update stok produk
-            $this->produkModel->update($item['id_produk'], [
-                'stok' => $item['stok'] - $item['quantity']
-            ]);
+            foreach ($cart as $item) {
+                $detailData = [
+                    'id_transaksi' => $transaksiId,
+                    'id_produk' => $item['id_produk'],
+                    'jumlah' => $item['quantity'],
+                    'harga_satuan' => $item['harga'],
+                    'subtotal' => $item['subtotal'],
+                    'created_at' => date('Y-m-d H:i:s'),
+                ];
+
+                if (!$this->detailTransaksiModel->insert($detailData)) {
+                    throw new \RuntimeException('Detail transaksi tidak dapat disimpan.');
+                }
+
+                $product = $currentProducts[$item['id_produk']];
+                if (!$this->produkModel->update($item['id_produk'], [
+                    'stok' => (int) $product['stok'] - (int) $item['quantity'],
+                ])) {
+                    throw new \RuntimeException('Stok produk tidak dapat diperbarui.');
+                }
+            }
+
+            $db->transCommit();
+        } catch (\Throwable $e) {
+            $db->transRollback();
+            log_message('error', 'Checkout gagal: {message}', ['message' => $e->getMessage()]);
+            return $this->redirectWithFlash('/checkout', 'error', 'Transaksi gagal diproses. Silakan coba lagi.');
         }
 
         // Kosongkan keranjang
         session()->set('cart', []);
 
-        return redirect()->to('/katalog')->with('success', 'Transaksi berhasil! Nomor transaksi: ' . $nomorTransaksi);
+        session()->setTempdata('last_order_number', $nomorTransaksi, 300);
+
+        return $this->redirectWithFlash('/pesanan/sukses', 'success', 'Pesanan berhasil dibuat.');
+    }
+
+    /**
+     * Temporary confirmation page shown immediately after a successful order.
+     */
+    public function orderSuccess()
+    {
+        $orderNumber = session()->getTempdata('last_order_number');
+
+        if (!is_string($orderNumber) || $orderNumber === '') {
+            return $this->redirectWithFlash('/katalog', 'error', 'Data pesanan tidak ditemukan.');
+        }
+
+        return view('order_success_view', [
+            'title' => 'Pesanan Berhasil - Griya Pot Bunga',
+            'orderNumber' => $orderNumber,
+        ]);
     }
 
     // ==========================================

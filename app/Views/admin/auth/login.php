@@ -29,7 +29,7 @@
                             <div class="alert alert-danger py-2"><?= esc($error) ?></div>
                         <?php endif; ?>
 
-                        <form action="<?= base_url('/admin/auth/login/process') ?>" method="POST" id="loginForm">
+                        <form action="<?= base_url('/admin/login/process') ?>" method="POST" id="loginForm">
                             <?= csrf_field() ?>
 
                             <div class="mb-3">

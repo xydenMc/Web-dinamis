@@ -35,7 +35,7 @@
     <header class="bg-surface-container-lowest/65 backdrop-blur-2xl rounded-full shadow-lg mx-auto mt-4 mb-4">
         <div class="flex items-center justify-between px-6 py-4">
             <div class="flex items-center gap-3">
-                <a href="<?= base_url('transaksi') ?>" class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
+                <a href="<?= base_url('admin/transaksi') ?>" class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
                     <span class="material-symbols-outlined">arrow_back</span>
                 </a>
                 <h1 class="text-xl font-bold">Detail Transaksi</h1>
@@ -68,7 +68,7 @@
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     <div>
                                         <p class="text-sm text-on-surface-variant">Nama</p>
-                                        <p class="font-medium"><?= esc($pelanggan['username']) ?></p>
+                                        <p class="font-medium"><?= esc($pelanggan['nama'] ?? $pelanggan['username'] ?? '-') ?></p>
                                     </div>
                                     <div>
                                         <p class="text-sm text-on-surface-variant">Email</p>
@@ -98,7 +98,7 @@
                     <!-- Status Update -->
                     <div class="border border-gray-100 rounded-2xl p-4 mb-6">
                         <h3 class="font-semibold mb-3">Status Transaksi</h3>
-                        <form action="<?= base_url('transaksi/update-status/' . $transaksi['id_transaksi']) ?>" method="post" class="flex items-center gap-3">
+                        <form action="<?= base_url('admin/transaksi/update-status/' . $transaksi['id_transaksi']) ?>" method="post" class="flex items-center gap-3">
                             <?= csrf_field() ?>
                             <select name="status" class="px-4 py-2.5 rounded-xl border border-outline/30">
                                 <option value="Pending" <?= $transaksi['status'] === 'Pending' ? 'selected' : '' ?>>Pending</option>

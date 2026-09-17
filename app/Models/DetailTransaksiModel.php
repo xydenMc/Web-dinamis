@@ -19,9 +19,9 @@ class DetailTransaksiModel extends Model
         'updated_at'
     ];
 
-    protected $useTimestamps = true;
-    protected $createdField = 'created_at';
-    protected $updatedField = 'updated_at';
+    // Skema `detail_transaksi` hanya mempunyai `created_at`, tanpa
+    // `updated_at`. Nilai created_at diisi secara eksplisit saat checkout.
+    protected $useTimestamps = false;
 
     public function getByTransaksi($id_transaksi)
     {

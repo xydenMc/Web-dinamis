@@ -36,6 +36,9 @@ class Filters extends BaseFilters
         'pagecache'     => PageCache::class,
         'performance'   => PerformanceMetrics::class,
         'checkSession'  => CheckSession::class,
+        // Routes use `role:admin`; this alias delegates the role argument to
+        // CheckSession so unauthenticated/non-admin users are redirected safely.
+        'role'          => CheckSession::class,
     ];
 
     /**
@@ -54,10 +57,8 @@ class Filters extends BaseFilters
     public array $required = [
         'before' => [
             'forcehttps', // Force Global Secure Requests
-            'pagecache',  // Web Page Caching
         ],
         'after' => [
-            'pagecache',   // Web Page Caching
             'performance', // Performance Metrics
             'toolbar',     // Debug Toolbar
         ],

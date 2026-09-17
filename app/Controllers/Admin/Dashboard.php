@@ -41,6 +41,15 @@ class Dashboard extends BaseController
             'pending_orders' => $this->getPendingOrders()
         ];
 
+        $data['low_stock_products'] = $this->productModel
+            ->where('stok <=', 5)
+            ->orderBy('stok', 'ASC')
+            ->findAll(3);
+        $data['active_products'] = $this->productModel
+            ->where('is_active', 1)
+            ->countAllResults();
+        $data['admin_name'] = session('nama') ?? session('name') ?? 'Admin';
+
         // Chart data - last 30 days
         $data['sales_chart_data'] = $this->getSalesChartData(30);
 
