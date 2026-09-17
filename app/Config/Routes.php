@@ -6,65 +6,99 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
+// ============================================================================
+// AUTHENTICATION ROUTES
+// ============================================================================
+
 // Public auth routes
-$routes->get('/login', 'Login::index');
-$routes->post('/login/process', 'Login::process');
-$routes->get('/register', 'Register::index');
-$routes->post('/register/process', 'Register::process');
-$routes->get('/logout', 'Login::logout');
+$routes->get('/login', 'Auth::index');
+$routes->post('/login/process', 'Auth::process');
+$routes->get('/register', 'Auth::register');
+$routes->post('/register/process', 'Auth::registerProcess');
+$routes->get('/logout', 'Auth::logout');
+$routes->get('/login-redirect', 'Auth::showLoginModal');
 
-// Default route - redirect based on login status handled by controller
-$routes->get('/', 'Login::index');
+// ============================================================================
+// PUBLIC ROUTES (Bisa diakses tanpa login)
+// ============================================================================
 
-// Protected routes - require login
-$routes->get('/katalog', 'Toko::index', ['filter' => 'checkSession']);
+// Storefront built in TokoController. Both / and /katalog use this UI.
+$routes->get('/', 'Toko::index');
+$routes->get('/katalog', 'Toko::index');
+$routes->get('/kategori', 'Toko::category');
+$routes->get('/kategori/(:segment)', 'Toko::category/$1');
+$routes->get('/search', 'Toko::search');
+$routes->get('/produk/(:num)', 'Toko::detail/$1');
 
-// Category routes
-$routes->get('/kategori/(:segment)', 'Toko::category/$1', ['filter' => 'checkSession']);
-$routes->get('/search', 'Toko::search', ['filter' => 'checkSession']);
+// ============================================================================
+// CART ROUTES (LOGIN REQUIRED)
+// ============================================================================
 
-// Cart routes - protected
-$routes->post('/cart/add', 'Toko::addToCart', ['filter' => 'checkSession']);
-$routes->post('/api/cart/add', 'Toko::addToCart', ['filter' => 'checkSession']);
-$routes->get('/cart', 'Toko::getCart', ['filter' => 'checkSession']);
-$routes->post('/cart/update', 'Toko::updateCart', ['filter' => 'checkSession']);
-$routes->post('/cart/remove', 'Toko::removeFromCart', ['filter' => 'checkSession']);
-$routes->post('/cart/clear', 'Toko::clearCart', ['filter' => 'checkSession']);
+// Session cart used by the storefront.
+$routes->post('/cart/add', 'Toko::addToCart');
+$routes->get('/cart', 'Toko::getCart');
+$routes->post('/cart/update', 'Toko::updateCart');
+$routes->post('/cart/remove', 'Toko::removeFromCart');
+$routes->post('/cart/clear', 'Toko::clearCart');
 
-// Checkout routes - protected
-$routes->get('/checkout', 'Toko::checkout', ['filter' => 'checkSession']);
-$routes->post('/checkout/process', 'Toko::processCheckout', ['filter' => 'checkSession']);
+// ============================================================================
+// CHECKOUT ROUTES (LOGIN REQUIRED)
+// ============================================================================
 
-// Product detail - protected
-$routes->get('/produk/(:num)', 'Toko::detail/$1', ['filter' => 'checkSession']);
+// Checkout performs its own login check before showing or processing the form.
+$routes->get('/checkout', 'Toko::checkout');
+$routes->post('/checkout/process', 'Toko::processCheckout');
 
-// Admin dashboard (hanya untuk admin)
-$routes->get('/dashboard', 'Dashboard::index', ['filter' => 'checkSession:admin']);
+// ============================================================================
+// ADMIN ROUTES
+// ============================================================================
 
-// Reports - admin
-$routes->get('/laporan', 'AdminLaporan::index', ['filter' => 'checkSession:admin']);
+// Admin login route
+$routes->get('/admin/login', 'Admin\Auth::showLogin');
+$routes->post('/admin/login/process', 'Admin\Auth::login');
+$routes->get('/admin/logout', 'Admin\Auth::logout');
 
-// Transaction management - admin
-$routes->group('', ['filter' => 'checkSession:admin'], function ($routes) {
-    $routes->get('/transaksi', 'AdminTransaksi::index');
-    $routes->get('/transaksi/(:num)', 'AdminTransaksi::detail/$1');
-    $routes->post('/transaksi/update-status/(:num)', 'AdminTransaksi::updateStatus/$1');
-});
+// Admin dashboard - require admin role
+$routes->get('/dashboard', 'Admin\Dashboard::index', ['filter' => 'role:admin']);
 
-// Protected admin/CRUD routes - require login AND admin role
-$routes->group('', ['filter' => 'checkSession:admin'], function ($routes) {
-    // Produk CRUD
-    $routes->post('/tambah-produk', 'Toko::tambah');
-    $routes->post('/edit-produk/(:num)', 'Toko::edit/$1');
-    $routes->post('/hapus-produk/(:num)', 'Toko::hapus/$1');
+// Admin transactions
+$routes->get('/admin/transaksi', 'Admin\Transaction::index', ['filter' => 'role:admin']);
+$routes->get('/admin/transaksi/(:num)', 'Admin\Transaction::detail/$1', ['filter' => 'role:admin']);
+$routes->post('/admin/transaksi/update-status/(:num)', 'Admin\Transaction::updateStatus/$1', ['filter' => 'role:admin']);
+$routes->post('/admin/transaksi/cancel/(:num)', 'Admin\Transaction::cancel/$1', ['filter' => 'role:admin']);
 
-    // Category CRUD
-    $routes->post('/tambah-kategori', 'AdminKategori::tambah');
-    $routes->post('/edit-kategori/(:num)', 'AdminKategori::edit/$1');
-    $routes->post('/hapus-kategori/(:num)', 'AdminKategori::hapus/$1');
-});
+// Admin reports
+$routes->get('/admin/laporan', 'Admin\Report::index', ['filter' => 'role:admin']);
+$routes->post('/admin/laporan/export', 'Admin\Report::exportCsv', ['filter' => 'role:admin']);
 
-// Public API
+// Admin CRUD - Products
+$routes->post('/admin/produk', 'Admin\Product::create', ['filter' => 'role:admin']);
+$routes->get('/admin/produk', 'Admin\Product::index', ['filter' => 'role:admin']);
+$routes->get('/admin/produk/create', 'Admin\Product::createPage', ['filter' => 'role:admin']);
+$routes->get('/admin/produk/(:num)', 'Admin\Product::edit/$1', ['filter' => 'role:admin']);
+$routes->put('/admin/produk/(:num)', 'Admin\Product::update/$1', ['filter' => 'role:admin']);
+$routes->delete('/admin/produk/(:num)', 'Admin\Product::delete/$1', ['filter' => 'role:admin']);
+
+// Admin CRUD - Categories
+$routes->post('/admin/kategori', 'Admin\Category::create', ['filter' => 'role:admin']);
+$routes->get('/admin/kategori', 'Admin\Category::index', ['filter' => 'role:admin']);
+$routes->get('/admin/kategori/create', 'Admin\Category::createPage', ['filter' => 'role:admin']);
+$routes->get('/admin/kategori/(:num)', 'Admin\Category::edit/$1', ['filter' => 'role:admin']);
+$routes->put('/admin/kategori/(:num)', 'Admin\Category::update/$1', ['filter' => 'role:admin']);
+$routes->delete('/admin/kategori/(:num)', 'Admin\Category::delete/$1', ['filter' => 'role:admin']);
+
+// Admin CRUD - Videos
+$routes->post('/admin/video', 'Admin\Video::create', ['filter' => 'role:admin']);
+$routes->get('/admin/video', 'Admin\Video::index', ['filter' => 'role:admin']);
+$routes->get('/admin/video/create', 'Admin\Video::createPage', ['filter' => 'role:admin']);
+$routes->get('/admin/video/(:num)', 'Admin\Video::edit/$1', ['filter' => 'role:admin']);
+$routes->put('/admin/video/(:num)', 'Admin\Video::update/$1', ['filter' => 'role:admin']);
+$routes->delete('/admin/video/(:num)', 'Admin\Video::delete/$1', ['filter' => 'role:admin']);
+
+// ============================================================================
+// PUBLIC API
+// ============================================================================
+
 $routes->get('/api/produk', 'Toko::apiProduk');
 $routes->get('/api/produk/(:num)', 'Toko::apiProdukById/$1');
 $routes->get('/api/kategori', 'Toko::apiKategori');
