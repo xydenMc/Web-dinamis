@@ -1,3 +1,10 @@
+<?php if (!empty($adminCatalogMode)): ?>
+<?= view('admin/store_catalog_admin', [
+    'products' => $produks ?? [],
+    'admin_name' => $admin_name ?? 'Admin',
+    'kategoris' => $kategoris ?? [],
+]) ?>
+<?php else: ?>
 <!DOCTYPE html>
 <html lang="id">
 
@@ -245,7 +252,7 @@
     <?php endif; ?>
 
     <header class="fixed top-0 inset-x-0 z-50">
-        <div class="w-full max-w-[1280px] h-20 bg-surface-container-lowest/65 backdrop-blur-2xl rounded-full shadow-[0_16px_36px_-8px_rgba(42,30,23,0.08),0_4px_16px_-2px_rgba(42,30,23,0.04)] mx-auto px-gutter-mobile lg:px-gutter-desktop flex items-center justify-between transition-all">
+        <div class="w-full h-20 bg-surface-container-lowest/65 backdrop-blur-2xl rounded-full shadow-[0_16px_36px_-8px_rgba(42,30,23,0.08),0_4px_16px_-2px_rgba(42,30,23,0.04)] px-gutter-mobile lg:px-gutter-desktop flex items-center justify-between transition-all">
             <div class="flex items-center gap-space-sm">
                 <img alt="Griya Pot Bunga Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpwvO9iQZ9lDuh8yr22477P8XcdNBR4_m47lhkSeptg4KRN1mKNgHUC_C-Bz_34DomPfduGCmd0dBQDdBwb6HwRI634h8GcBl0MOAjtwlq3cPBfwREhRDd-GQ5FEATZmEjJpkd-bGJX4j_R9lpdrVgHqRAECM9rEQ_3rztgRbmHcnjL3cwdaRkP6Hbuq_l8m0_jQSJiMii3Cg5FUnvJNIht8zg3HAffzEkU_1738FKJw5_qWc3_DHqLQ" />
                 <div class="flex flex-col">
@@ -1120,3 +1127,4 @@
 
 
 </html>
+<?php endif; ?>
