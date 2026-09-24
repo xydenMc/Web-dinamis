@@ -35,8 +35,19 @@ class Toko extends Controller
         // Ambil kategori untuk filter
         $data['kategoris'] = $this->kategoriModel->getKategoriAktif();
 
-        // Ambil produk terbaru/aktif
-        $data['produks'] = $this->produkModel->getProdukAktif();
+        // Admin manages every product; customers only see active items.
+        $adminCatalogMode = $data['role'] === 'admin' && $this->request->getGet('etalase') !== '1';
+        if ($data['role'] === 'admin' && !$adminCatalogMode) {
+            $data['role'] = 'customer';
+        }
+        $data['produks'] = $adminCatalogMode
+            ? $this->produkModel->getProduk()
+            : $this->produkModel->getProdukAktif();
+
+        if ($adminCatalogMode) {
+            $data['adminCatalogMode'] = true;
+            $data['admin_name'] = session()->get('nama') ?? session()->get('username') ?? 'Admin';
+        }
 
         return view('toko_view', $data);
     }
