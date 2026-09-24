@@ -83,6 +83,6 @@ class Auth extends BaseController
     public function logout()
     {
         session()->destroy();
-        return $this->redirectWithFlash('/admin/login', 'success', 'Berhasil logout');
+        return $this->redirectWithFlash('/katalog', 'success', 'Berhasil logout');
     }
 }

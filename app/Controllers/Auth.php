@@ -112,11 +112,17 @@ class Auth extends BaseController
                 ]
             ],
             'password' => [
-                'rules' => 'required|min_length[6]|confirm_password[password]',
+                'rules' => 'required|min_length[6]',
                 'errors' => [
                     'required' => 'Password wajib diisi.',
-                    'min_length' => 'Password minimal 8 karakter.',
-                    'confirm_password' => 'Password tidak cocok.'
+                    'min_length' => 'Password minimal 6 karakter.',
+                ]
+            ],
+            'confirm_password' => [
+                'rules' => 'required|matches[password]',
+                'errors' => [
+                    'required' => 'Konfirmasi password wajib diisi.',
+                    'matches' => 'Password tidak cocok.',
                 ]
             ],
             'telepon' => [
