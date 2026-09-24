@@ -35,19 +35,9 @@ class Toko extends BaseController
         // Ambil kategori untuk filter
         $data['kategoris'] = $this->kategoriModel->getKategoriAktif();
 
-        // Admin manages every product; customers only see active items.
-        $adminCatalogMode = $data['role'] === 'admin' && $this->request->getGet('etalase') !== '1';
-        if ($data['role'] === 'admin' && !$adminCatalogMode) {
-            $data['role'] = 'customer';
-        }
-        $data['produks'] = $adminCatalogMode
-            ? $this->produkModel->getProduk()
-            : $this->produkModel->getProdukAktif();
-
-        if ($adminCatalogMode) {
-            $data['adminCatalogMode'] = true;
-            $data['admin_name'] = session()->get('nama') ?? session()->get('username') ?? 'Admin';
-        }
+        // Keep the original storefront for every role while preserving the
+        // authenticated role so admin navigation and controls remain visible.
+        $data['produks'] = $this->produkModel->getProdukAktif();
 
         return view('toko_view', $data);
     }

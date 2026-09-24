@@ -70,7 +70,10 @@ class Auth extends BaseController
         session()->set('last_activity', time());
 
         // Check for redirect after login (from guest actions)
-        $redirectUrl = session()->get('login_redirect') ?? '/katalog';
+        // Admins always land on the storefront catalog after login.
+        $redirectUrl = $user['role'] === 'admin'
+            ? '/katalog'
+            : (session()->get('login_redirect') ?? '/katalog');
         session()->remove('login_redirect');
 
         return $this->redirectWithFlash($redirectUrl, 'success', 'Berhasil login sebagai ' . $user['role']);

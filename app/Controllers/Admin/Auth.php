@@ -21,7 +21,7 @@ class Auth extends BaseController
     public function showLogin()
     {
         if (session()->get('logged_in') && session()->get('role') === 'admin') {
-            return redirect()->to('/dashboard');
+            return redirect()->to('/katalog');
         }
 
         $data['title'] = 'Login Admin - Panel';
@@ -69,12 +69,14 @@ class Auth extends BaseController
         // Store admin data in session
         session()->set('logged_in', true);
         session()->set('user_id', $user['id']);
+        session()->set('id', $user['id']);
         session()->set('nama', $user['nama']);
+        session()->set('username', $user['nama'] ?? $user['email']);
         session()->set('email', $user['email']);
         session()->set('role', $user['role']);
         session()->set('last_activity', time());
 
-        return $this->redirectWithFlash('/dashboard', 'success', 'Berhasil login sebagai admin');
+        return $this->redirectWithFlash('/katalog', 'success', 'Berhasil login sebagai admin');
     }
 
     /**

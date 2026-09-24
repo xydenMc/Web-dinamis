@@ -1,10 +1,3 @@
-<?php if (!empty($adminCatalogMode)): ?>
-<?= view('admin/store_catalog_admin', [
-    'products' => $produks ?? [],
-    'admin_name' => $admin_name ?? 'Admin',
-    'kategoris' => $kategoris ?? [],
-]) ?>
-<?php else: ?>
 <!DOCTYPE html>
 <html lang="id">
 
@@ -1127,4 +1120,3 @@
 
 
 </html>
-<?php endif; ?>
