@@ -2,10 +2,9 @@
 
 namespace App\Controllers\Admin;
 
-use App\Models\ProductModel;
-use App\Models\CategoryModel;
-use App\Models\TransactionModel;
-use App\Models\UserModel;
+use App\Models\ProdukModel;
+use App\Models\KategoriModel;
+use App\Models\TransaksiModel;
 use CodeIgniter\Controller;
 
 class Dashboard extends BaseController
@@ -13,14 +12,13 @@ class Dashboard extends BaseController
     protected $productModel;
     protected $categoryModel;
     protected $transactionModel;
-    protected $userModel;
 
     public function __construct()
     {
-        $this->productModel = new ProductModel();
-        $this->categoryModel = new CategoryModel();
-        $this->transactionModel = new TransactionModel();
-        $this->userModel = new UserModel();
+        // Storefront checkout and stock are stored in these legacy tables.
+        $this->productModel = new ProdukModel();
+        $this->categoryModel = new KategoriModel();
+        $this->transactionModel = new TransaksiModel();
     }
 
     /**
@@ -32,9 +30,8 @@ class Dashboard extends BaseController
 
         // Statistics
         $data['stats'] = [
-            'total_products' => $this->productModel->countAll(),
-            'total_categories' => $this->categoryModel->countAll(),
-            'total_users' => $this->userModel->countAll(),
+            'total_products' => $this->productModel->countAllResults(),
+            'total_categories' => $this->categoryModel->countAllResults(),
             'today_transactions' => $this->getTodayTransactionsCount(),
             'today_revenue' => $this->getTodayRevenue(),
             'month_revenue' => $this->getMonthRevenue(),
@@ -42,16 +39,18 @@ class Dashboard extends BaseController
         ];
 
         $data['low_stock_products'] = $this->productModel
+            ->select('id_produk, nama_produk, stok')
             ->where('stok <=', 5)
+            ->where('status', 'aktif')
             ->orderBy('stok', 'ASC')
             ->findAll(3);
         $data['active_products'] = $this->productModel
-            ->where('is_active', 1)
+            ->where('status', 'aktif')
             ->countAllResults();
         $data['admin_name'] = session('nama') ?? session('name') ?? 'Admin';
 
         // Chart data - last 30 days
-        $data['sales_chart_data'] = $this->getSalesChartData(30);
+        $data['sales_chart_data'] = $this->getSalesByProductData(30);
 
         // Recent orders
         $data['recent_orders'] = $this->getRecentOrders(10);
@@ -65,8 +64,8 @@ class Dashboard extends BaseController
     private function getTodayTransactionsCount(): int
     {
         $today = date('Y-m-d');
-        $builder = $this->db->table('transactions');
-        $builder->where('DATE(created_at)', $today);
+        $builder = $this->db->table('transaksi');
+        $builder->where('DATE(tanggal)', $today);
         return (int) $builder->countAllResults();
     }
 
@@ -76,9 +75,9 @@ class Dashboard extends BaseController
     private function getTodayRevenue(): float
     {
         $today = date('Y-m-d');
-        $builder = $this->db->table('transactions');
-        $builder->where('DATE(created_at)', $today);
-        $result = $builder->select('SUM(total) as total')->get()->getRowArray();
+        $builder = $this->db->table('transaksi');
+        $builder->where('DATE(tanggal)', $today)->where('status !=', 'Dibatalkan');
+        $result = $builder->select('SUM(total_harga) as total')->get()->getRowArray();
         return (float) ($result['total'] ?? 0);
     }
 
@@ -88,9 +87,9 @@ class Dashboard extends BaseController
     private function getMonthRevenue(): float
     {
         $monthStart = date('Y-m-01');
-        $builder = $this->db->table('transactions');
-        $builder->where('created_at >=', $monthStart);
-        $result = $builder->select('SUM(total) as total')->get()->getRowArray();
+        $builder = $this->db->table('transaksi');
+        $builder->where('tanggal >=', $monthStart)->where('status !=', 'Dibatalkan');
+        $result = $builder->select('SUM(total_harga) as total')->get()->getRowArray();
         return (float) ($result['total'] ?? 0);
     }
 
@@ -99,40 +98,30 @@ class Dashboard extends BaseController
      */
     private function getPendingOrders(): int
     {
-        return $this->transactionModel->where('status', 'pending')->countAllResults();
+        return $this->transactionModel->where('status', 'Pending')->countAllResults();
     }
 
     /**
      * Get sales chart data
      */
-    private function getSalesChartData(int $days = 30): array
+    private function getSalesByProductData(int $days = 30): array
     {
-        $date = date('Y-m-d', strtotime("-{$days} days"));
+        $from = date('Y-m-d', strtotime('-' . ($days - 1) . ' days'));
+        $builder = $this->db->table('detail_transaksi dt');
+        $rows = $builder->select('p.nama_produk as label, SUM(dt.subtotal) as value')
+            ->join('transaksi t', 't.id_transaksi = dt.id_transaksi')
+            ->join('produk p', 'p.id_produk = dt.id_produk', 'left')
+            ->where('t.tanggal >=', $from)
+            ->where('t.status !=', 'Dibatalkan')
+            ->groupBy('dt.id_produk, p.nama_produk')
+            ->orderBy('value', 'DESC')
+            ->limit(8)
+            ->get()->getResultArray();
 
-        $builder = $this->db->table('transactions');
-        $builder->select("DATE(created_at) as date, SUM(total) as total");
-        $builder->where('created_at >=', $date);
-        $builder->where('status !=', 'cancelled');
-        $builder->groupBy('DATE(created_at)');
-        $builder->orderBy('date', 'ASC');
-
-        $results = $builder->get()->getResultArray();
-
-        $chartData = [];
-        foreach ($results as $row) {
-            $chartData[$row['date']] = (float) $row['total'];
-        }
-
-        // Fill missing dates with 0
-        for ($i = 0; $i < $days; $i++) {
-            $d = date('Y-m-d', strtotime("-$i days"));
-            if (!isset($chartData[$d])) {
-                $chartData[$d] = 0;
-            }
-        }
-
-        ksort($chartData);
-        return $chartData;
+        return array_map(static fn(array $row): array => [
+            'label' => $row['label'] ?? 'Produk dihapus',
+            'value' => (float) $row['value'],
+        ], $rows);
     }
 
     /**
@@ -140,10 +129,10 @@ class Dashboard extends BaseController
      */
     private function getRecentOrders(int $limit = 10): array
     {
-        $builder = $this->db->table('transactions');
-        $builder->select('transactions.*, users.nama as user_nama');
-        $builder->join('users', 'transactions.user_id = users.id', 'left');
-        $builder->orderBy('transactions.created_at', 'DESC');
+        $builder = $this->db->table('transaksi t');
+        $builder->select("t.id_transaksi as id, t.nomor_transaksi as invoice_number, t.total_harga as total, t.status, t.tanggal as created_at, t.alamat_kirim as kota, u.nama as user_nama, u.nama as nama_penerima");
+        $builder->join('users u', 'u.id = t.id_pelanggan', 'left');
+        $builder->orderBy('t.tanggal', 'DESC');
         $builder->limit($limit);
 
         return $builder->get()->getResultArray();
