@@ -6,6 +6,7 @@ use App\Models\ProdukModel;
 use App\Models\KategoriModel;
 use App\Models\TransaksiModel;
 use App\Models\DetailTransaksiModel;
+use App\Libraries\SimplePdf;
 
 class Toko extends BaseController
 {
@@ -178,86 +179,6 @@ class Toko extends BaseController
         }
 
         return redirect()->to('/katalog');
-    }
-
-    public function hapus($id = null)
-    {
-        if ($id === null) {
-            return redirect()->to('/katalog');
-        }
-
-        $produk = $this->produkModel->find($id);
-
-        if ($produk) {
-            $this->produkModel->delete($id);
-            return $this->redirectWithFlash('/katalog', 'success', 'Produk berhasil dihapus.');
-        }
-
-        return $this->redirectWithFlash('/katalog', 'error', 'Produk tidak ditemukan.');
-    }
-
-    public function edit($id = null)
-    {
-        if ($id === null) {
-            return redirect()->to('/katalog');
-        }
-
-        $produk = $this->produkModel->find($id);
-
-        if ($produk) {
-            if ($this->request->getMethod() === 'POST') {
-                $validation = $this->validate([
-                    'nama_produk' => [
-                        'rules'  => 'required|min_length[3]|max_length[255]',
-                        'errors' => [
-                            'required' => 'Nama produk wajib diisi.',
-                            'min_length' => 'Nama produk minimal 3 karakter.',
-                            'max_length' => 'Nama produk maksimal 255 karakter.'
-                        ]
-                    ],
-                    'harga' => [
-                        'rules'  => 'required|numeric|greater_than_equal_to[0]',
-                        'errors' => [
-                            'required' => 'Harga wajib diisi.',
-                            'numeric' => 'Harga harus berupa angka.',
-                            'greater_than_equal_to' => 'Harga tidak boleh negatif.'
-                        ]
-                    ],
-                    'stok' => [
-                        'rules'  => 'required|numeric|greater_than_equal_to[0]',
-                        'errors' => [
-                            'required' => 'Stok wajib diisi.',
-                            'numeric' => 'Stok harus berupa angka.',
-                            'greater_than_equal_to' => 'Stok tidak boleh negatif.'
-                        ]
-                    ]
-                ]);
-
-                if ($validation) {
-                    $data = [
-                        'nama_produk' => $this->request->getPost('nama_produk'),
-                        'deskripsi'   => $this->request->getPost('deskripsi'),
-                        'kategori'    => $this->request->getPost('kategori'),
-                        'harga'       => (int) $this->request->getPost('harga'),
-                        'stok'        => (int) $this->request->getPost('stok'),
-                        'status'      => $this->request->getPost('status') ?? 'aktif',
-                        'gambar'      => $this->request->getPost('gambar')
-                    ];
-
-                    $this->produkModel->update($id, $data);
-
-                    return $this->redirectWithFlash('/katalog', 'success', 'Produk berhasil diperbarui.');
-                } else {
-                    return redirect()->to('/katalog')->with('errors', $this->validator->getErrors());
-                }
-            }
-
-            $data['produk'] = $produk;
-            $data['title'] = 'Edit Produk - Griya Pot Bunga';
-            return view('toko_view', $data);
-        }
-
-        return $this->redirectWithFlash('/katalog', 'error', 'Produk tidak ditemukan.');
     }
 
     // ==========================================
@@ -660,10 +581,58 @@ class Toko extends BaseController
             return $this->redirectWithFlash('/katalog', 'error', 'Data pesanan tidak ditemukan.');
         }
 
+        $transaction = $this->transaksiModel->where('nomor_transaksi', $orderNumber)->first();
+        if (!$transaction) {
+            return $this->redirectWithFlash('/katalog', 'error', 'Data pesanan tidak ditemukan.');
+        }
+
         return view('order_success_view', [
             'title' => 'Pesanan Berhasil - Griya Pot Bunga',
             'orderNumber' => $orderNumber,
+            'transaction' => $transaction,
+            'items' => $this->detailTransaksiModel->getDetailWithProduk((int) $transaction['id_transaksi']),
         ]);
+    }
+
+    public function downloadReceiptPdf()
+    {
+        $orderNumber = session()->getTempdata('last_order_number');
+        if (!is_string($orderNumber) || $orderNumber === '') {
+            return $this->redirectWithFlash('/katalog', 'error', 'Data struk tidak ditemukan.');
+        }
+
+        $transaction = $this->transaksiModel->where('nomor_transaksi', $orderNumber)->first();
+        if (!$transaction) {
+            return $this->redirectWithFlash('/katalog', 'error', 'Data struk tidak ditemukan.');
+        }
+        $items = $this->detailTransaksiModel->getDetailWithProduk((int) $transaction['id_transaksi']);
+
+        $lines = [
+            'GRIYA POT BUNGA',
+            'STRUK PEMBELIAN',
+            str_repeat('-', 70),
+            'Nomor pesanan: ' . $transaction['nomor_transaksi'],
+            'Tanggal: ' . date('d-m-Y H:i', strtotime($transaction['tanggal'])),
+            'Status: ' . $transaction['status'],
+            'Alamat kirim: ' . $transaction['alamat_kirim'],
+            'Telepon: ' . $transaction['nomor_telepon'],
+            '',
+            'RINCIAN PESANAN',
+        ];
+        foreach ($items as $item) {
+            $lines[] = ($item['nama_produk'] ?? 'Produk') . ' | ' . (int) $item['jumlah'] . ' x Rp ' . number_format((float) $item['harga_satuan'], 0, ',', '.') . ' = Rp ' . number_format((float) $item['subtotal'], 0, ',', '.');
+        }
+        $lines[] = str_repeat('-', 70);
+        $lines[] = 'Jumlah item: ' . (int) $transaction['total_item'];
+        $lines[] = 'Metode pembayaran: ' . $transaction['metode_pembayaran'];
+        $lines[] = 'TOTAL: Rp ' . number_format((float) $transaction['total_harga'], 0, ',', '.');
+        $lines[] = '';
+        $lines[] = 'Terima kasih telah berbelanja di Griya Pot Bunga.';
+
+        return $this->response
+            ->setHeader('Content-Type', 'application/pdf')
+            ->setHeader('Content-Disposition', 'attachment; filename="struk-' . preg_replace('/[^A-Za-z0-9-]/', '', $orderNumber) . '.pdf"')
+            ->setBody(SimplePdf::render($lines));
     }
 
     // ==========================================

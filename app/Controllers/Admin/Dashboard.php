@@ -47,6 +47,7 @@ class Dashboard extends BaseController
         $data['active_products'] = $this->productModel
             ->where('status', 'aktif')
             ->countAllResults();
+        $data['products'] = $this->productModel->orderBy('nama_produk', 'ASC')->findAll();
         $data['admin_name'] = session('nama') ?? session('name') ?? 'Admin';
 
         // Chart data - last 30 days

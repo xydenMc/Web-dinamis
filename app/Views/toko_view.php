@@ -258,7 +258,7 @@
             <nav class="hidden lg:flex items-center gap-space-xs bg-surface-container-low/70 p-space-2xs rounded-full backdrop-blur-md">
                 <?php if (isset($user) && $user && isset($role) && $role === 'admin'): ?>
                     <a class="px-space-md py-space-xs text-on-surface-variant font-label-md text-label-md hover:text-on-surface transition-colors rounded-full" data-path="dashboard" href="<?= base_url('dashboard') ?>">Dashboard</a>
-                    <a class="px-space-md py-space-xs text-on-surface-variant font-label-md text-label-md hover:text-on-surface transition-colors rounded-full" data-path="kategori" href="<?= base_url('kategori') ?>">Kategori</a>
+                    <a class="px-space-md py-space-xs text-on-surface-variant font-label-md text-label-md hover:text-on-surface transition-colors rounded-full" data-path="kelola-produk" href="<?= base_url('/admin/kelola-produk') ?>">Kelola Produk</a>
                     <a class="px-space-md py-space-xs text-on-surface-variant font-label-md text-label-md hover:text-on-surface transition-colors rounded-full" data-path="transaksi" href="<?= base_url('transaksi') ?>">Transaksi</a>
                 <?php endif; ?>
             </nav>
@@ -397,25 +397,9 @@
                                                 </span>
                                             </div>
 
-                                            <!-- Admin Buttons -->
-                                            <?php if (isset($user) && $user && isset($role) && $role === 'admin'): ?>
-                                                <!-- Tombol Edit di Pojok Kiri Samping Badge / Kanan Atas -->
-                                                <button onclick='openEditModal(<?= json_encode($produk, JSON_HEX_APOS | JSON_HEX_QUOT) ?>)' class="absolute top-3 right-12 w-8 h-8 rounded-full bg-surface-container-lowest/90 backdrop-blur-md flex items-center justify-center text-on-surface-variant hover:text-primary transition-all shadow-sm z-10" title="Edit Produk">
-                                                    <span class="material-symbols-outlined text-[16px]">edit</span>
-                                                </button>
-                                                <!-- Tombol Hapus -->
-                                                <form action="/hapus-produk/<?= esc($id_produk) ?>" method="post" class="absolute top-3 right-3 z-10" onsubmit="return confirm('Apakah Anda yakin ingin menghapus produk ini?');">
-                                                    <?= csrf_field() ?>
-                                                    <button type="submit" class="w-8 h-8 rounded-full bg-red-500 hover:bg-red-600 text-white flex items-center justify-center transition-all shadow-sm" title="Hapus Produk">
-                                                        <span class="material-symbols-outlined text-[16px]">delete</span>
-                                                    </button>
-                                                </form>
-                                            <?php else: ?>
-                                                <!-- Favorite Button untuk Non-Admin -->
-                                                <button aria-label="Favoritkan" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-surface-container-lowest/80 backdrop-blur-md flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors shadow-sm">
-                                                    <span class="material-symbols-outlined text-[18px]">favorite</span>
-                                                </button>
-                                            <?php endif; ?>
+                                            <button aria-label="Favoritkan" class="absolute top-3 right-3 w-8 h-8 rounded-full bg-surface-container-lowest/80 backdrop-blur-md flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors shadow-sm">
+                                                <span class="material-symbols-outlined text-[18px]">favorite</span>
+                                            </button>
                                         </div>
 
                                         <!-- Title & Rating -->
@@ -908,22 +892,6 @@
                 document.getElementById('formModalTitle').textContent = 'Tambah Produk';
                 document.getElementById('produkForm').action = '/tambah';
                 document.getElementById('produkForm').reset();
-                document.getElementById('formModal').classList.remove('hidden');
-            }
-
-            function openEditModal(produk) {
-                document.getElementById('formMode').value = 'edit';
-                document.getElementById('formModalTitle').textContent = 'Edit Produk';
-                document.getElementById('produkForm').action = '/edit-produk/' + (produk.id_produk || produk.id);
-
-                document.getElementById('nama_produk').value = produk.nama_produk || '';
-                document.getElementById('kategori').value = produk.kategori || 'Keramik';
-                document.getElementById('harga').value = produk.harga || 0;
-                document.getElementById('stok').value = produk.stok || 0;
-                document.getElementById('gambar').value = produk.gambar || '';
-                document.getElementById('deskripsi').value = produk.deskripsi || '';
-                document.getElementById('status').value = produk.status || 'aktif';
-
                 document.getElementById('formModal').classList.remove('hidden');
             }
 

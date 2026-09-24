@@ -51,6 +51,7 @@ $routes->post('/cart/clear', 'Toko::clearCart');
 $routes->get('/checkout', 'Toko::checkout');
 $routes->post('/checkout/process', 'Toko::processCheckout');
 $routes->get('/pesanan/sukses', 'Toko::orderSuccess');
+$routes->get('/pesanan/struk/pdf', 'Toko::downloadReceiptPdf');
 
 // ============================================================================
 // ADMIN ROUTES
@@ -63,6 +64,9 @@ $routes->get('/admin/logout', 'Admin\Auth::logout');
 
 // Admin dashboard - require admin role
 $routes->get('/dashboard', 'Admin\Dashboard::index', ['filter' => 'role:admin']);
+$routes->get('/admin/kelola-produk', 'Admin\StoreProducts::index', ['filter' => 'role:admin']);
+$routes->post('/admin/kelola-produk/edit/(:num)', 'Admin\StoreProducts::update/$1', ['filter' => 'role:admin']);
+$routes->post('/admin/kelola-produk/hapus/(:num)', 'Admin\StoreProducts::delete/$1', ['filter' => 'role:admin']);
 
 // Admin transactions
 // Checkout storefront writes to the legacy `transaksi` / `detail_transaksi`
@@ -78,7 +82,8 @@ $routes->post('/transaksi/update-status/(:num)', 'AdminTransaksi::updateStatus/$
 
 // Admin reports
 $routes->get('/admin/laporan', 'Admin\Report::index', ['filter' => 'role:admin']);
-$routes->post('/admin/laporan/export', 'Admin\Report::exportCsv', ['filter' => 'role:admin']);
+$routes->get('/admin/laporan/export', 'Admin\Report::exportCsv', ['filter' => 'role:admin']);
+$routes->get('/admin/laporan/export-pdf', 'Admin\Report::exportPdf', ['filter' => 'role:admin']);
 
 // Admin CRUD - Products
 $routes->post('/admin/produk', 'Admin\Product::create', ['filter' => 'role:admin']);
