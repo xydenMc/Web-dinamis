@@ -66,6 +66,7 @@ $routes->get('/admin/logout', 'Admin\Auth::logout');
 // Admin dashboard - require admin role
 $routes->get('/dashboard', 'Admin\Dashboard::index', ['filter' => 'role:admin']);
 $routes->get('/admin/kelola-produk', 'Admin\StoreProducts::index', ['filter' => 'role:admin']);
+$routes->post('/admin/kelola-produk/tambah', 'Toko::tambah', ['filter' => 'role:admin']);
 $routes->post('/admin/kelola-produk/edit/(:num)', 'Admin\StoreProducts::update/$1', ['filter' => 'role:admin']);
 $routes->post('/admin/kelola-produk/hapus/(:num)', 'Admin\StoreProducts::delete/$1', ['filter' => 'role:admin']);
 

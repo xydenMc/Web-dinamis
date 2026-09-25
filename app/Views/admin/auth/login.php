@@ -22,6 +22,7 @@
             <div class="col-lg-5 col-md-7">
                 <div class="login-card">
                     <div class="card-header bg-dark text-white text-center py-4">
+                        <img src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpwvO9iQZ9lDuh8yr22477P8XcdNBR4_m47lhkSeptg4KRN1mKNgHUC_C-Bz_34DomPfduGCmd0dBQDdBwb6HwRI634h8GcBl0MOAjtwlq3cPBfwREhRDd-GQ5FEATZmEjJpkd-bGJX4j_R9lpdrVgHqRAECM9rEQ_3rztgRbmHcnjL3cwdaRkP6Hbuq_l8m0_jQSJiMii3Cg5FUnvJNIht8zg3HAffzEkU_1738FKJw5_qWc3_DHqLQ" alt="Logo Griya Pot Bunga" class="mb-2 rounded-3" style="width:56px;height:56px;object-fit:contain;background:#fff;padding:4px">
                         <h4 class="mb-0 fw-bold">Admin Login</h4>
                     </div>
                     <div class="card-body p-4">

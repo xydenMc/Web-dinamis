@@ -173,13 +173,13 @@ class Toko extends BaseController
 
                 $this->produkModel->insert($data);
 
-                return $this->redirectWithFlash('/katalog', 'success', 'Produk berhasil ditambahkan.');
+                return $this->redirectWithFlash('/admin/kelola-produk', 'success', 'Produk berhasil ditambahkan.');
             } else {
-                return redirect()->to('/katalog')->with('errors', $this->validator->getErrors());
+                return redirect()->to('/admin/kelola-produk')->with('errors', $this->validator->getErrors());
             }
         }
 
-        return redirect()->to('/katalog');
+        return redirect()->to('/admin/kelola-produk');
     }
 
     // ==========================================

@@ -32,7 +32,7 @@ $categories = array_values(array_unique(array_filter(array_map(static fn(array $
     <aside class="admin-sidebar fixed inset-y-0 left-0 z-30 flex w-72 flex-col justify-between border-r border-stone-200 bg-surface-container-low/90 p-6 shadow-sm backdrop-blur-2xl">
         <div>
             <a class="mb-9 flex items-center gap-3 border-b border-stone-200 pb-6 text-inherit no-underline" href="<?= base_url('/dashboard') ?>">
-                <span class="material-symbols-outlined grid h-11 w-11 place-items-center rounded-2xl bg-primary text-2xl text-white">potted_plant</span>
+                <span class="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white p-1 shadow-sm"><img class="h-full w-full rounded-xl object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpwvO9iQZ9lDuh8yr22477P8XcdNBR4_m47lhkSeptg4KRN1mKNgHUC_C-Bz_34DomPfduGCmd0dBQDdBwb6HwRI634h8GcBl0MOAjtwlq3cPBfwREhRDd-GQ5FEATZmEjJpkd-bGJX4j_R9lpdrVgHqRAECM9rEQ_3rztgRbmHcnjL3cwdaRkP6Hbuq_l8m0_jQSJiMii3Cg5FUnvJNIht8zg3HAffzEkU_1738FKJw5_qWc3_DHqLQ" alt="Logo Griya Pot Bunga"></span>
                 <span><strong class="block text-base">Griya Pot Bunga</strong><small class="text-xs font-semibold uppercase tracking-wider text-primary">Admin Kasongan</small></span>
             </a>
             <p class="mb-2 px-3 text-xs font-bold uppercase tracking-widest text-on-surface-variant">Menu utama</p>

@@ -92,12 +92,7 @@
 <div>
 <!-- Brand Logo & Studio Identity -->
 <div class="flex items-center gap-3.5 pb-7 mb-7 border-b border-stone-200/60" data-purpose="brand-header">
-<div class="w-12 h-12 rounded-2xl bg-gradient-to-br from-clay-500 to-clay-600 flex items-center justify-center text-white shadow-liquid-glow shadow-clay-500/25 ring-2 ring-white/80">
-<svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="1.8" viewbox="0 0 24 24">
-<path d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" stroke-linecap="round" stroke-linejoin="round"></path>
-<path d="M6 18.5c1.5 2 4 2.5 6 2.5s4.5-.5 6-2.5l-1-7H7l-1 7z" stroke-linecap="round" stroke-linejoin="round"></path>
-</svg>
-</div>
+<div class="w-12 h-12 rounded-2xl bg-white p-1 flex items-center justify-center shadow-liquid ring-2 ring-white/80 overflow-hidden"><img class="w-full h-full rounded-xl object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpwvO9iQZ9lDuh8yr22477P8XcdNBR4_m47lhkSeptg4KRN1mKNgHUC_C-Bz_34DomPfduGCmd0dBQDdBwb6HwRI634h8GcBl0MOAjtwlq3cPBfwREhRDd-GQ5FEATZmEjJpkd-bGJX4j_R9lpdrVgHqRAECM9rEQ_3rztgRbmHcnjL3cwdaRkP6Hbuq_l8m0_jQSJiMii3Cg5FUnvJNIht8zg3HAffzEkU_1738FKJw5_qWc3_DHqLQ" alt="Logo Griya Pot Bunga"></div>
 <div>
 <h1 class="font-serif font-bold text-lg text-botanica-dark tracking-tight leading-tight">Griya Pot Bunga</h1>
 <p class="text-[10px] tracking-wider font-semibold uppercase text-clay-600 mt-0.5">STUDIO KASONGAN / PANEL ADMIN</p>
@@ -207,20 +202,6 @@
 </div>
 </header>
 <!-- END: Topbar & Header -->
-<!-- BEGIN: Alert Sync Banner -->
-<div class="mb-8 rounded-2xl p-4 bg-botanica-amberLight/90 border border-botanica-amberBorder text-botanica-dark shadow-sm flex items-center gap-3.5 backdrop-blur-md">
-<div class="w-8 h-8 rounded-xl bg-amber-100 text-amber-700 flex items-center justify-center shrink-0 border border-amber-200">
-<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
-<circle cx="12" cy="12" r="10"></circle>
-<line x1="12" x2="12" y1="16" y2="12"></line>
-<line x1="12" x2="12.01" y1="8" y2="8"></line>
-</svg>
-</div>
-<p class="text-xs sm:text-sm font-medium text-stone-700">
-        Data dashboard diambil langsung dari transaksi dan katalog toko.
-      </p>
-</div>
-<!-- END: Alert Sync Banner -->
 <!-- BEGIN: 4 Metric KPI Cards -->
 <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8" data-purpose="kpi-metrics-grid">
 <!-- Metric 1: Total Koleksi Produk -->

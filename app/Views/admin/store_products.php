@@ -16,7 +16,6 @@ $categories = array_values(array_unique(array_filter(array_map(static fn (array 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { theme: { extend: { colors: {
             primary: '#c85a32', 'primary-container': '#b94e27', background: '#fcf9f4',
@@ -28,6 +27,7 @@ $categories = array_values(array_unique(array_filter(array_map(static fn (array 
             'on-tertiary-fixed-variant': '#936a16'
         }, fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] } } };
     </script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body{font-family:'Plus Jakarta Sans',sans-serif}.edit-row{display:none}.edit-row.open{display:table-row}
         .edit-form-grid{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px}
@@ -41,20 +41,20 @@ $categories = array_values(array_unique(array_filter(array_map(static fn (array 
     <aside class="admin-sidebar fixed inset-y-0 left-0 z-30 flex w-72 flex-col justify-between bg-surface-container-low/90 p-6 shadow-[0_1px_12px_rgba(42,30,23,0.06)] backdrop-blur-2xl">
         <div>
             <a class="mb-8 flex items-center gap-3 border-b border-stone-200 pb-6 text-inherit no-underline" href="<?= base_url('/katalog') ?>">
-                <span class="material-symbols-outlined grid h-11 w-11 place-items-center rounded-2xl bg-primary text-2xl text-white">potted_plant</span>
+                <span class="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white p-1 shadow-sm"><img class="h-full w-full rounded-xl object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpwvO9iQZ9lDuh8yr22477P8XcdNBR4_m47lhkSeptg4KRN1mKNgHUC_C-Bz_34DomPfduGCmd0dBQDdBwb6HwRI634h8GcBl0MOAjtwlq3cPBfwREhRDd-GQ5FEATZmEjJpkd-bGJX4j_R9lpdrVgHqRAECM9rEQ_3rztgRbmHcnjL3cwdaRkP6Hbuq_l8m0_jQSJiMii3Cg5FUnvJNIht8zg3HAffzEkU_1738FKJw5_qWc3_DHqLQ" alt="Logo Griya Pot Bunga"></span>
                 <span><strong class="block text-base">Griya Pot Bunga</strong><small class="text-xs font-semibold uppercase tracking-wider text-primary">Studio Kasongan / Admin</small></span>
             </a>
             <p class="mb-2 px-3 text-xs font-bold uppercase tracking-widest text-on-surface-variant">Menu utama</p>
             <nav class="space-y-1">
                 <a class="flex items-center gap-3 rounded-xl px-3 py-3 text-on-surface-variant transition hover:bg-surface-container-high" href="<?= base_url('/dashboard') ?>"><span class="material-symbols-outlined">dashboard</span>Dashboard</a>
                 <a aria-current="page" class="flex items-center gap-3 rounded-xl bg-primary-container px-3 py-3 font-semibold text-white" href="<?= base_url('/admin/kelola-produk') ?>"><span class="material-symbols-outlined">potted_plant</span>Kelola Produk</a>
-                <a class="flex items-center gap-3 rounded-xl px-3 py-3 text-on-surface-variant transition hover:bg-surface-container-high" href="<?= base_url('/transaksi') ?>"><span class="material-symbols-outlined">local_shipping</span>Pesanan Masuk</a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-3 text-on-surface-variant transition hover:bg-surface-container-high" href="<?= base_url('/admin/transaksi') ?>"><span class="material-symbols-outlined">local_shipping</span>Pesanan Masuk</a>
                 <a class="flex items-center gap-3 rounded-xl px-3 py-3 text-on-surface-variant transition hover:bg-surface-container-high" href="<?= base_url('/admin/laporan') ?>"><span class="material-symbols-outlined">summarize</span>Laporan</a>
             </nav>
             <p class="mb-2 mt-7 px-3 text-xs font-bold uppercase tracking-widest text-on-surface-variant">Akses toko</p>
             <a class="flex items-center gap-3 rounded-xl px-3 py-3 text-on-surface-variant transition hover:bg-surface-container-high" href="<?= base_url('/katalog') ?>"><span class="material-symbols-outlined">storefront</span>Lihat Etalase</a>
         </div>
-        <a class="flex items-center gap-3 rounded-xl px-3 py-3 text-on-surface-variant transition hover:bg-error-container hover:text-error" href="<?= base_url('/logout') ?>"><span class="material-symbols-outlined">logout</span>Keluar Sesi Admin</a>
+        <a class="flex items-center gap-3 rounded-xl px-3 py-3 text-on-surface-variant transition hover:bg-error-container hover:text-error" href="<?= base_url('/admin/logout') ?>"><span class="material-symbols-outlined">logout</span>Keluar Sesi Admin</a>
     </aside>
 
     <div class="admin-content min-h-screen pl-72">
@@ -116,7 +116,7 @@ $categories = array_values(array_unique(array_filter(array_map(static fn (array 
     </div>
 
     <div id="addProductModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4" onclick="if(event.target===this)closeAddProduct()">
-        <form class="w-full max-w-2xl space-y-4 rounded-2xl bg-white p-6 shadow-xl" method="post" action="<?= base_url('/tambah') ?>">
+        <form class="w-full max-w-2xl space-y-4 rounded-2xl bg-white p-6 shadow-xl" method="post" action="<?= base_url('/admin/kelola-produk/tambah') ?>">
             <?= csrf_field() ?>
             <div class="flex items-center justify-between"><h2 class="text-xl font-bold">Tambah Produk</h2><button type="button" class="rounded-full px-3 py-1 hover:bg-surface-container-low" onclick="closeAddProduct()">Tutup</button></div>
             <div class="grid gap-4 sm:grid-cols-2"><label class="text-sm font-semibold">Nama produk<input class="field mt-1" name="nama_produk" required minlength="3"></label><label class="text-sm font-semibold">Kategori<input class="field mt-1" name="kategori"></label><label class="text-sm font-semibold">Harga (Rp)<input class="field mt-1" name="harga" type="number" min="0" required></label><label class="text-sm font-semibold">Stok<input class="field mt-1" name="stok" type="number" min="0" required></label><label class="text-sm font-semibold sm:col-span-2">URL gambar<input class="field mt-1" name="gambar" type="url" placeholder="https://..."></label><label class="text-sm font-semibold sm:col-span-2">Deskripsi<textarea class="field mt-1" name="deskripsi" rows="3"></textarea></label><label class="text-sm font-semibold">Status<select class="field mt-1" name="status"><option value="aktif">Aktif</option><option value="non aktif">Nonaktif</option></select></label></div>
