@@ -130,7 +130,7 @@
 </svg>
 <span>Kelola Produk</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-2xl text-botanica-dark/80 hover:text-clay-600 hover:bg-stone-200/40 transition font-medium text-sm" href="<?= base_url('/admin/laporan') ?>"><span class="w-5 text-center">PDF</span><span>Laporan Pesanan</span></a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-2xl text-botanica-dark/80 hover:text-clay-600 hover:bg-stone-200/40 transition font-medium text-sm" href="<?= base_url('/admin/laporan') ?>"><span class="material-symbols-outlined w-5 text-center">summarize</span><span>Laporan Pesanan</span></a>
 </nav>
 </div>
 <!-- Navigation Menu Group 2: Public Access -->
