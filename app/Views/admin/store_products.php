@@ -5,6 +5,7 @@ $activeProducts = count(array_filter($products, static fn (array $product): bool
 $totalStock = array_sum(array_map(static fn (array $product): int => (int) ($product['stok'] ?? 0), $products));
 $inventoryValue = array_sum(array_map(static fn (array $product): float => (float) ($product['harga'] ?? 0) * (int) ($product['stok'] ?? 0), $products));
 $categories = array_values(array_unique(array_filter(array_map(static fn (array $product): string => trim((string) ($product['kategori'] ?? '')), $products))));
+$activePercent = $totalProducts > 0 ? (int) round(($activeProducts / $totalProducts) * 100) : 0;
 ?>
 <!doctype html>
 <html lang="id">
@@ -29,9 +30,10 @@ $categories = array_values(array_unique(array_filter(array_map(static fn (array 
         }, fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] } } };
     </script>
     <style>
-        body{font-family:'Plus Jakarta Sans',sans-serif;background:radial-gradient(ellipse at 75% 15%,rgba(255,249,235,.72),transparent 34%),linear-gradient(135deg,#f8f4ee,#fcf9f4 56%,#f7f2eb)}
+        body{font-family:'Plus Jakarta Sans',sans-serif;background:#fcf9f4}
         .admin-sidebar{background:linear-gradient(180deg,rgba(253,250,246,.88),rgba(247,242,235,.94));border-right:1px solid rgba(231,225,217,.7)}
         .product-card{background:linear-gradient(135deg,rgba(255,255,255,.84),rgba(255,255,255,.58));border:1px solid rgba(255,255,255,.8);box-shadow:0 12px 35px rgba(66,47,34,.055),inset 0 1px rgba(255,255,255,.8)}
+        .font-headline{font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:-.025em}
         .edit-row{display:none}.edit-row.open{display:table-row}
         .edit-form-grid{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px}
         .field{width:100%;border:1px solid #ded6ce;border-radius:12px;padding:10px 12px;background:#fff;color:#261e1a;font:inherit}
@@ -43,7 +45,7 @@ $categories = array_values(array_unique(array_filter(array_map(static fn (array 
 <body class="min-h-screen bg-background text-on-surface antialiased">
     <aside class="admin-sidebar fixed inset-y-0 left-0 z-30 flex w-72 flex-col justify-between p-6 shadow-[0_1px_12px_rgba(42,30,23,0.06)] backdrop-blur-2xl">
         <div>
-            <a class="mb-8 flex items-center gap-3 border-b border-stone-200 pb-6 text-inherit no-underline" href="<?= base_url('/katalog') ?>">
+            <a class="mb-8 flex items-center gap-3 border-b border-stone-200 pb-6 text-inherit no-underline" href="<?= base_url('/dashboard') ?>">
                 <span class="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white p-1 shadow-sm"><img class="h-full w-full rounded-xl object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpwvO9iQZ9lDuh8yr22477P8XcdNBR4_m47lhkSeptg4KRN1mKNgHUC_C-Bz_34DomPfduGCmd0dBQDdBwb6HwRI634h8GcBl0MOAjtwlq3cPBfwREhRDd-GQ5FEATZmEjJpkd-bGJX4j_R9lpdrVgHqRAECM9rEQ_3rztgRbmHcnjL3cwdaRkP6Hbuq_l8m0_jQSJiMii3Cg5FUnvJNIht8zg3HAffzEkU_1738FKJw5_qWc3_DHqLQ" alt="Logo Griya Pot Bunga"></span>
                 <span><strong class="block text-base">Griya Pot Bunga</strong><small class="text-xs font-semibold uppercase tracking-wider text-primary">Studio Kasongan / Admin</small></span>
             </a>
@@ -51,8 +53,8 @@ $categories = array_values(array_unique(array_filter(array_map(static fn (array 
             <nav class="space-y-1">
                 <a class="flex items-center gap-3 rounded-xl px-3 py-3 text-on-surface-variant transition hover:bg-surface-container-high" href="<?= base_url('/dashboard') ?>"><span class="material-symbols-outlined">dashboard</span>Dashboard</a>
                 <a aria-current="page" class="flex items-center gap-3 rounded-xl bg-primary-container px-3 py-3 font-semibold text-white" href="<?= base_url('/admin/kelola-produk') ?>"><span class="material-symbols-outlined">potted_plant</span>Kelola Produk</a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-3 text-on-surface-variant transition hover:bg-surface-container-high" href="<?= base_url('/admin/kategori') ?>"><span class="material-symbols-outlined">category</span>Kategori Gerabah</a>
                 <a class="flex items-center gap-3 rounded-xl px-3 py-3 text-on-surface-variant transition hover:bg-surface-container-high" href="<?= base_url('/admin/transaksi') ?>"><span class="material-symbols-outlined">local_shipping</span>Pesanan Masuk</a>
-                <a class="flex items-center gap-3 rounded-xl px-3 py-3 text-on-surface-variant transition hover:bg-surface-container-high" href="<?= base_url('/admin/laporan') ?>"><span class="material-symbols-outlined">summarize</span>Laporan Pesanan</a>
             </nav>
             <p class="mb-2 mt-7 px-3 text-xs font-bold uppercase tracking-widest text-on-surface-variant">Akses toko</p>
             <a class="flex items-center gap-3 rounded-xl px-3 py-3 text-on-surface-variant transition hover:bg-surface-container-high" href="<?= base_url('/katalog') ?>"><span class="material-symbols-outlined">storefront</span>Lihat Etalase</a>
@@ -61,34 +63,36 @@ $categories = array_values(array_unique(array_filter(array_map(static fn (array 
     </aside>
 
     <div class="admin-content min-h-screen pl-72">
-        <header class="sticky top-0 z-20 flex min-h-16 items-center justify-between gap-4 border-b border-stone-200/50 bg-[#fcf9f4]/75 px-5 py-3 backdrop-blur-xl lg:px-10">
-            <div class="min-w-0 text-sm text-on-surface-variant">Griya Pot Bunga <span class="mx-2">/</span><strong class="text-on-surface">Kelola Produk</strong></div>
-            <button class="inline-flex shrink-0 items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-primary-container" type="button" onclick="openAddProduct()"><span class="material-symbols-outlined text-lg">add</span><span class="hidden sm:inline">Tambah Produk</span></button>
+        <header class="sticky top-0 z-20 flex min-h-16 items-center justify-between gap-4 border-b border-stone-200/50 bg-[#fcf9f4]/85 px-5 py-3 backdrop-blur-xl lg:px-10">
+            <div class="min-w-0 text-sm text-on-surface-variant">Griya Pot Bunga <span class="mx-2">›</span> Panel Admin <span class="mx-2">›</span><strong class="text-on-surface">Kelola Produk</strong></div>
+            <div class="flex items-center gap-3"><label class="relative hidden md:block"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-lg text-on-surface-variant">search</span><input class="field w-64 rounded-full bg-surface-container-high/60 py-2 pl-10" id="headerSearch" type="search" placeholder="Cari produk..."></label><button class="inline-flex shrink-0 items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-primary-container" type="button" onclick="openAddProduct()"><span class="material-symbols-outlined text-lg">add</span><span class="hidden sm:inline">Tambah Produk</span></button></div>
         </header>
 
         <main class="mx-auto max-w-[1600px] px-4 py-7 sm:px-6 lg:px-10">
             <div class="mb-7 flex flex-col justify-between gap-4 md:flex-row md:items-end">
-                <div><p class="mb-2 text-xs font-bold uppercase tracking-[.16em] text-primary">Studio Kasongan Pottery Suite</p><h1 class="font-serif text-4xl font-bold tracking-tight">Kelola Produk &amp; Koleksi Studio</h1><p class="mt-2 max-w-2xl text-sm leading-6 text-on-surface-variant">Perbarui produk yang terhubung langsung ke etalase publik.</p></div>
-                <a class="inline-flex items-center gap-2 self-start rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-primary shadow-sm transition hover:bg-surface-container-low md:self-auto" href="<?= base_url('/katalog') ?>"><span class="material-symbols-outlined text-lg">open_in_new</span>Lihat Etalase</a>
+                <div><p class="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-[.16em] text-primary"><span class="material-symbols-outlined text-base">local_florist</span>Studio Kasongan Pottery Suite</p><h1 class="font-headline text-4xl font-bold tracking-tight">Kelola Produk &amp; Koleksi Studio</h1><p class="mt-2 max-w-2xl text-sm leading-6 text-on-surface-variant">Perbarui nama, harga, stok, dan status produk toko yang terhubung langsung ke etalase publik.</p></div>
+                <div class="flex flex-wrap gap-2"><a class="inline-flex items-center gap-2 self-start rounded-full bg-white/80 px-4 py-2.5 text-sm font-semibold text-primary shadow-sm transition hover:bg-white md:self-auto" href="<?= base_url('/dashboard') ?>"><span class="material-symbols-outlined text-lg">arrow_back</span>Kembali ke Dashboard</a><a class="inline-flex items-center gap-2 self-start rounded-full bg-white/80 px-4 py-2.5 text-sm font-semibold text-primary shadow-sm transition hover:bg-white md:self-auto" href="<?= base_url('/katalog') ?>"><span class="material-symbols-outlined text-lg">open_in_new</span>Lihat Etalase</a></div>
             </div>
 
             <?php if ($message = session()->getFlashdata('success')): ?><div class="mb-5 rounded-xl border border-green-200 bg-green-50 px-4 py-3 text-sm text-green-800"><?= esc($message) ?></div><?php endif; ?>
             <?php if ($message = session()->getFlashdata('error')): ?><div class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800"><?= esc($message) ?></div><?php endif; ?>
 
-            <section class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
+            <section class="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 <article class="product-card rounded-3xl p-5"><div class="flex justify-between text-sm text-on-surface-variant"><span>Total produk</span><span class="material-symbols-outlined text-primary">potted_plant</span></div><div class="mt-3 font-serif text-3xl font-bold"><?= number_format($totalProducts) ?></div><div class="mt-1 text-xs text-on-surface-variant"><?= number_format($activeProducts) ?> produk aktif</div></article>
                 <article class="product-card rounded-3xl p-5"><div class="flex justify-between text-sm text-on-surface-variant"><span>Total stok fisik</span><span class="material-symbols-outlined text-secondary">inventory_2</span></div><div class="mt-3 font-serif text-3xl font-bold"><?= number_format($totalStock) ?></div><div class="mt-1 text-xs text-on-surface-variant">Jumlah stok dari tabel produk</div></article>
-                <article class="product-card rounded-3xl p-5"><div class="flex justify-between text-sm text-on-surface-variant"><span>Nilai inventaris</span><span class="material-symbols-outlined text-primary">payments</span></div><div class="mt-3 font-serif text-2xl font-bold text-primary">Rp <?= number_format($inventoryValue, 0, ',', '.') ?></div><div class="mt-1 text-xs text-on-surface-variant">Harga produk dikalikan stok</div></article>
+                <article class="product-card rounded-3xl p-5"><div class="flex justify-between text-sm text-on-surface-variant"><span>Nilai inventaris</span><span class="material-symbols-outlined text-primary">payments</span></div><div class="mt-3 text-2xl font-bold text-primary">Rp <?= number_format($inventoryValue, 0, ',', '.') ?></div><div class="mt-1 text-xs text-on-surface-variant">Harga produk dikalikan stok</div></article>
+                <article class="rounded-3xl border border-primary-fixed bg-primary-fixed/35 p-5 shadow-sm"><div class="flex justify-between text-sm font-medium text-on-primary-fixed-variant"><span>Produk aktif</span><span class="material-symbols-outlined text-primary">verified</span></div><div class="mt-3 text-3xl font-bold text-on-primary-fixed"><?= $activePercent ?>%</div><div class="mt-1 text-xs text-on-primary-fixed-variant"><?= number_format($activeProducts) ?> dari <?= number_format($totalProducts) ?> produk tampil di etalase</div></article>
             </section>
 
-            <section class="product-card mb-5 flex flex-col gap-3 rounded-3xl p-4 lg:flex-row lg:items-center">
+            <section class="product-card mb-5 flex flex-col justify-between gap-3 rounded-3xl p-4 lg:flex-row lg:items-center">
                 <label class="relative min-w-60 flex-1"><span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-lg text-on-surface-variant">search</span><input class="field rounded-full bg-surface-container-low pl-10" id="productSearch" type="search" placeholder="Cari nama produk atau kategori..."></label>
                 <select class="field w-full rounded-full bg-surface-container-low lg:w-auto" id="categoryFilter"><option value="all">Semua kategori</option><?php foreach ($categories as $category): ?><option value="<?= esc(mb_strtolower($category, 'UTF-8')) ?>"><?= esc($category) ?></option><?php endforeach; ?></select>
                 <select class="field w-full rounded-full bg-surface-container-low lg:w-auto" id="stockFilter"><option value="all">Semua stok</option><option value="safe">Stok aman (&gt;10)</option><option value="low">Stok terbatas (≤10)</option></select>
+                <button class="inline-flex shrink-0 items-center justify-center gap-2 rounded-full bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-md transition hover:bg-primary-container" type="button" onclick="openAddProduct()"><span class="material-symbols-outlined text-lg">add_circle</span>Tambah Produk Baru</button>
             </section>
 
             <section class="product-card overflow-hidden rounded-3xl">
-                <div class="flex flex-col justify-between gap-2 bg-surface-container-low/60 px-5 py-4 sm:flex-row sm:items-center"><div class="flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full bg-primary"></span><h2 class="font-semibold">Daftar Produk</h2><span class="rounded-full bg-surface-container-high px-2.5 py-1 text-xs text-on-surface-variant"><?= number_format($totalProducts) ?> produk</span></div><span class="text-xs text-on-surface-variant">Gambar, harga, dan stok dari data produk.</span></div>
+                <div class="flex flex-col justify-between gap-2 bg-surface-container-low/60 px-5 py-4 sm:flex-row sm:items-center"><div class="flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-full bg-primary"></span><h2 class="font-semibold">Daftar Produk Aktif</h2><span class="rounded-full bg-surface-container-high px-2.5 py-1 text-xs text-on-surface-variant"><?= number_format($totalProducts) ?> ditampilkan</span></div><span class="text-xs text-on-surface-variant">Gambar dan stok diambil dari data produk.</span></div>
                 <div class="w-full overflow-x-auto"><table class="w-full min-w-[940px] border-collapse text-left">
                     <thead class="bg-surface-container-low/50 text-xs uppercase tracking-wider text-on-surface-variant"><tr><th class="px-5 py-3">Produk</th><th class="px-4 py-3">Kategori</th><th class="px-4 py-3">Harga</th><th class="px-4 py-3">Stok</th><th class="px-4 py-3">Status</th><th class="px-5 py-3 text-right">Aksi</th></tr></thead>
                     <tbody id="productRows" class="divide-y divide-stone-100">
@@ -131,6 +135,7 @@ $categories = array_values(array_unique(array_filter(array_map(static fn (array 
         function closeAddProduct() { const modal = document.getElementById('addProductModal'); modal.classList.add('hidden'); modal.classList.remove('flex'); }
         function toggleEdit(id) { document.getElementById('edit-row-' + id)?.classList.toggle('open'); }
         const search = document.getElementById('productSearch');
+        const headerSearch = document.getElementById('headerSearch');
         const category = document.getElementById('categoryFilter');
         const stock = document.getElementById('stockFilter');
         function filterProducts() {
@@ -147,6 +152,8 @@ $categories = array_values(array_unique(array_filter(array_map(static fn (array 
             });
         }
         search.addEventListener('input', filterProducts);
+        headerSearch?.addEventListener('input', () => { search.value = headerSearch.value; filterProducts(); });
+        search.addEventListener('input', () => { if (headerSearch) headerSearch.value = search.value; });
         category.addEventListener('change', filterProducts);
         stock.addEventListener('change', filterProducts);
     </script>
