@@ -34,6 +34,16 @@ $activePercent = $totalProducts > 0 ? (int) round(($activeProducts / $totalProdu
         .admin-sidebar{background:linear-gradient(180deg,rgba(253,250,246,.88) 0%,rgba(247,242,235,.94) 100%);border-right:1px solid rgba(231,225,217,.7);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px)}
         .product-card{background:linear-gradient(135deg,rgba(255,255,255,.82) 0%,rgba(255,255,255,.58) 100%);backdrop-filter:blur(28px) saturate(160%);-webkit-backdrop-filter:blur(28px) saturate(160%);border:1px solid rgba(255,255,255,.85);box-shadow:0 8px 32px rgba(197,106,73,.08),0 2px 8px rgba(0,0,0,.03)}
         .font-headline{font-family:'Playfair Display',Georgia,serif;letter-spacing:-.025em}
+        /* Keep the dashboard terracotta palette visible even if Tailwind's CDN config loads late. */
+        .bg-primary,.bg-primary-container{background-color:#c85a32!important;color:#fff!important}
+        .bg-primary:hover,.bg-primary-container:hover{background-color:#b94e27!important;color:#fff!important}
+        .text-primary{color:#c85a32!important}
+        .text-secondary{color:#5c735d!important}
+        .bg-secondary-container{background-color:#eef3ee!important;color:#5c735d!important}
+        .bg-primary-fixed{background-color:#f5d9cd!important}
+        .text-on-primary-fixed-variant{color:#7c331a!important}
+        .text-on-primary-fixed{color:#261e1a!important}
+        .border-primary-fixed{border-color:#f5d9cd!important}
         .edit-row{display:none}.edit-row.open{display:table-row}
         .edit-form-grid{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px}
         .field{width:100%;border:1px solid #ded6ce;border-radius:12px;padding:10px 12px;background:#fff;color:#261e1a;font:inherit}
