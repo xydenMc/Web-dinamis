@@ -29,6 +29,7 @@ $routes->get('/kategori', 'Toko::category');
 $routes->get('/kategori/(:segment)', 'Toko::category/$1');
 $routes->get('/search', 'Toko::search');
 $routes->get('/produk/(:num)', 'Toko::detail/$1');
+$routes->post('/tambah', 'Toko::tambah', ['filter' => 'role:admin']);
 
 // ============================================================================
 // CART ROUTES (LOGIN REQUIRED)
