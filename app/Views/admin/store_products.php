@@ -52,9 +52,9 @@ $activePercent = $totalProducts > 0 ? (int) round(($activeProducts / $totalProdu
             <p class="mb-2 px-3 text-xs font-bold uppercase tracking-widest text-on-surface-variant">Menu utama</p>
             <nav class="space-y-1">
                 <a class="flex items-center gap-3 rounded-xl px-3 py-3 text-on-surface-variant transition hover:bg-surface-container-high" href="<?= base_url('/dashboard') ?>"><span class="material-symbols-outlined">dashboard</span>Dashboard</a>
-                <a aria-current="page" class="flex items-center gap-3 rounded-xl bg-primary-container px-3 py-3 font-semibold text-white" href="<?= base_url('/admin/kelola-produk') ?>"><span class="material-symbols-outlined">potted_plant</span>Kelola Produk</a>
-                <a class="flex items-center gap-3 rounded-xl px-3 py-3 text-on-surface-variant transition hover:bg-surface-container-high" href="<?= base_url('/admin/kategori') ?>"><span class="material-symbols-outlined">category</span>Kategori Gerabah</a>
                 <a class="flex items-center gap-3 rounded-xl px-3 py-3 text-on-surface-variant transition hover:bg-surface-container-high" href="<?= base_url('/admin/transaksi') ?>"><span class="material-symbols-outlined">local_shipping</span>Pesanan Masuk</a>
+                <a aria-current="page" class="flex items-center gap-3 rounded-xl bg-primary-container px-3 py-3 font-semibold text-white" href="<?= base_url('/admin/kelola-produk') ?>"><span class="material-symbols-outlined">potted_plant</span>Kelola Produk</a>
+                <a class="flex items-center gap-3 rounded-xl px-3 py-3 text-on-surface-variant transition hover:bg-surface-container-high" href="<?= base_url('/admin/laporan') ?>"><span class="material-symbols-outlined">summarize</span>Laporan Pesanan</a>
             </nav>
             <p class="mb-2 mt-7 px-3 text-xs font-bold uppercase tracking-widest text-on-surface-variant">Akses toko</p>
             <a class="flex items-center gap-3 rounded-xl px-3 py-3 text-on-surface-variant transition hover:bg-surface-container-high" href="<?= base_url('/katalog') ?>"><span class="material-symbols-outlined">storefront</span>Lihat Etalase</a>

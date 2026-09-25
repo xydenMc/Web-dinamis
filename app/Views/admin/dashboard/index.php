@@ -130,7 +130,7 @@
 </svg>
 <span>Kelola Produk</span>
 </a>
-<a class="flex items-center gap-3 px-4 py-3 rounded-2xl text-botanica-dark/80 hover:text-clay-600 hover:bg-stone-200/40 transition font-medium text-sm" href="<?= base_url('/admin/laporan') ?>"><span class="material-symbols-outlined w-5 text-center">summarize</span><span>Laporan Pesanan</span></a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-2xl text-botanica-dark/80 hover:text-clay-600 hover:bg-stone-200/40 transition font-medium text-sm" href="<?= base_url('/admin/laporan') ?>"><svg class="w-5 h-5 text-botanica-muted" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H5V3h2zm7 0v5h5M8 13h8m-8 4h8" stroke-linecap="round" stroke-linejoin="round"></path></svg><span>Laporan Pesanan</span></a>
 </nav>
 </div>
 <!-- Navigation Menu Group 2: Public Access -->
