@@ -19,13 +19,13 @@ $categories = array_values(array_unique(array_filter(array_map(static fn (array 
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { theme: { extend: { colors: {
-            primary: '#9f3c16', 'primary-container': '#bf542c', background: '#fcf9f4',
-            'surface-container-low': '#f6f3ee', 'surface-container-lowest': '#ffffff',
-            'surface-container-high': '#ebe8e3', 'surface-container': '#f0ede9',
-            'on-surface': '#1c1c19', 'on-surface-variant': '#57423b', secondary: '#45664e',
-            'secondary-container': '#c4e9cb', error: '#ba1a1a', 'error-container': '#ffdad6',
-            'primary-fixed': '#ffdbcf', 'tertiary-fixed': '#ffdcc3', 'on-primary-fixed-variant': '#822801',
-            'on-tertiary-fixed-variant': '#693c13'
+            primary: '#c85a32', 'primary-container': '#b94e27', background: '#fcf9f4',
+            'surface-container-low': '#f7f2ea', 'surface-container-lowest': '#ffffff',
+            'surface-container-high': '#f5d9cd', 'surface-container': '#faede6',
+            'on-surface': '#261e1a', 'on-surface-variant': '#71655e', secondary: '#5c735d',
+            'secondary-container': '#eef3ee', error: '#9b3d1c', 'error-container': '#faede6',
+            'primary-fixed': '#f5d9cd', 'tertiary-fixed': '#fcf6e8', 'on-primary-fixed-variant': '#7c331a',
+            'on-tertiary-fixed-variant': '#936a16'
         }, fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] } } };
     </script>
     <style>
