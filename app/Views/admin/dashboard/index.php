@@ -3,7 +3,7 @@
 <html lang="id"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title><?= esc($title ?? 'Dashboard Ikhtisar Studio') ?> | Griya Pot Bunga</title>
+<title><?= esc($title ?? 'Toko Saya - Admin') ?> | Griya Pot Bunga</title>
 <!-- Google Fonts: Plus Jakarta Sans & Playfair Display -->
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
 <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
@@ -170,10 +170,10 @@
 <nav class="flex items-center gap-2 text-xs text-botanica-muted font-medium mb-1.5">
 <span>Griya Pot Bunga</span>
 <span class="text-stone-300">/</span>
-<span class="text-clay-600 font-semibold">Ikhtisar Toko</span>
+<span class="text-clay-600 font-semibold">Dashboard Admin</span>
 </nav>
 <div class="flex items-center gap-3">
-<h2 class="font-serif text-3xl font-bold text-botanica-dark tracking-tight">Dashboard Ikhtisar Studio</h2>
+<h2 class="font-serif text-3xl font-bold text-botanica-dark tracking-tight">Toko Saya</h2>
 <span class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-100/70 text-emerald-800 border border-emerald-200/60">
 <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
             Data terkini

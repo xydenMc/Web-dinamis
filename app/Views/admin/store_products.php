@@ -27,13 +27,13 @@ $activePercent = $totalProducts > 0 ? (int) round(($activeProducts / $totalProdu
             'secondary-container': '#eef3ee', error: '#9b3d1c', 'error-container': '#faede6',
             'primary-fixed': '#f5d9cd', 'tertiary-fixed': '#fcf6e8', 'on-primary-fixed-variant': '#7c331a',
             'on-tertiary-fixed-variant': '#936a16'
-        }, fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] } } };
+        }, fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], serif: ['Playfair Display', 'Georgia', 'serif'] } } };
     </script>
     <style>
-        body{font-family:'Plus Jakarta Sans',sans-serif;background:#fcf9f4}
-        .admin-sidebar{background:linear-gradient(180deg,rgba(253,250,246,.88),rgba(247,242,235,.94));border-right:1px solid rgba(231,225,217,.7)}
-        .product-card{background:linear-gradient(135deg,rgba(255,255,255,.84),rgba(255,255,255,.58));border:1px solid rgba(255,255,255,.8);box-shadow:0 12px 35px rgba(66,47,34,.055),inset 0 1px rgba(255,255,255,.8)}
-        .font-headline{font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:-.025em}
+        body{font-family:'Plus Jakarta Sans',sans-serif;background:radial-gradient(ellipse at 15% 0%,rgba(245,217,205,.28),transparent 34%),radial-gradient(ellipse at 90% 85%,rgba(252,246,232,.65),transparent 35%),#fcf9f4}
+        .admin-sidebar{background:linear-gradient(180deg,rgba(253,250,246,.88) 0%,rgba(247,242,235,.94) 100%);border-right:1px solid rgba(231,225,217,.7);backdrop-filter:blur(32px);-webkit-backdrop-filter:blur(32px)}
+        .product-card{background:linear-gradient(135deg,rgba(255,255,255,.82) 0%,rgba(255,255,255,.58) 100%);backdrop-filter:blur(28px) saturate(160%);-webkit-backdrop-filter:blur(28px) saturate(160%);border:1px solid rgba(255,255,255,.85);box-shadow:0 8px 32px rgba(197,106,73,.08),0 2px 8px rgba(0,0,0,.03)}
+        .font-headline{font-family:'Playfair Display',Georgia,serif;letter-spacing:-.025em}
         .edit-row{display:none}.edit-row.open{display:table-row}
         .edit-form-grid{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px}
         .field{width:100%;border:1px solid #ded6ce;border-radius:12px;padding:10px 12px;background:#fff;color:#261e1a;font:inherit}

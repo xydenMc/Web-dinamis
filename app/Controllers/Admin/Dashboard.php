@@ -26,7 +26,7 @@ class Dashboard extends BaseController
      */
     public function index()
     {
-        $data['title'] = 'Dashboard Admin';
+        $data['title'] = 'Toko Saya - Admin';
 
         // Statistics
         $data['stats'] = [
