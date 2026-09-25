@@ -16,6 +16,7 @@ $categories = array_values(array_unique(array_filter(array_map(static fn (array 
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = { theme: { extend: { colors: {
             primary: '#c85a32', 'primary-container': '#b94e27', background: '#fcf9f4',
@@ -27,7 +28,6 @@ $categories = array_values(array_unique(array_filter(array_map(static fn (array 
             'on-tertiary-fixed-variant': '#936a16'
         }, fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'] } } };
     </script>
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body{font-family:'Plus Jakarta Sans',sans-serif}.edit-row{display:none}.edit-row.open{display:table-row}
         .edit-form-grid{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px}
