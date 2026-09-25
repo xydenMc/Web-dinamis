@@ -30,6 +30,7 @@
             }
         };
     </script>
+    <link rel="stylesheet" href="<?= base_url('css/admin-typography.css') ?>">
 </head>
 <body class="bg-background font-body-md text-on-surface min-h-screen">
     <!-- Flashdata Notifications -->

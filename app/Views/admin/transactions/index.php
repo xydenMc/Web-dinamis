@@ -31,6 +31,7 @@ function getStatusBadge($status) {
         .sidebar .nav-link:hover { color: white; background-color: #343a40; }
         .sidebar .nav-link.active { color: white; background-color: var(--primary); }
     </style>
+    <link rel="stylesheet" href="<?= base_url('css/admin-typography.css') ?>">
 </head>
 <body>
     <div class="container-fluid">

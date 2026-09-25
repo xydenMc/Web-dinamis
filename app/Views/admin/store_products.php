@@ -51,6 +51,7 @@ $activePercent = $totalProducts > 0 ? (int) round(($activeProducts / $totalProdu
         @media(max-width:800px){.admin-sidebar{display:none}.admin-content{padding-left:0!important}.edit-form-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
         @media(max-width:520px){.edit-form-grid{grid-template-columns:1fr}}
     </style>
+    <link rel="stylesheet" href="<?= base_url('css/admin-typography.css') ?>">
 </head>
 <body class="min-h-screen bg-background text-on-surface antialiased">
     <aside class="admin-sidebar fixed inset-y-0 left-0 z-30 flex w-72 flex-col justify-between p-6 shadow-[0_1px_12px_rgba(42,30,23,0.06)] backdrop-blur-2xl">

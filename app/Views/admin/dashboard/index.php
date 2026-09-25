@@ -82,6 +82,7 @@
       opacity: 0.45;
     }
   </style>
+    <link rel="stylesheet" href="<?= base_url('css/admin-typography.css') ?>">
 </head>
 <body class="bg-botanica-sand text-botanica-dark font-sans min-h-screen antialiased flex selection:bg-clay-200 selection:text-clay-900 relative overflow-x-hidden">
 <!-- Ambient background glow spots -->

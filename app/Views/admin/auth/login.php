@@ -15,6 +15,7 @@
         .login-card { border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.08); }
         .btn-primary { background-color: var(--primary); border-color: var(--primary); }
     </style>
+    <link rel="stylesheet" href="<?= base_url('css/admin-typography.css') ?>">
 </head>
 <body>
     <div class="container">

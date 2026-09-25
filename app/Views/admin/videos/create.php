@@ -15,6 +15,7 @@
         body { background-color: #f5f5f5; font-family: 'Plus Jakarta Sans', sans-serif; }
         .sidebar { min-height: 100vh; background-color: #212529; }
     </style>
+    <link rel="stylesheet" href="<?= base_url('css/admin-typography.css') ?>">
 </head>
 <body>
     <div class="container-fluid">

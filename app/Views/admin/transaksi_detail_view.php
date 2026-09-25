@@ -30,6 +30,7 @@
             }
         };
     </script>
+    <link rel="stylesheet" href="<?= base_url('css/admin-typography.css') ?>">
 </head>
 <body class="bg-background font-body-md text-on-surface min-h-screen">
     <header class="bg-surface-container-lowest/65 backdrop-blur-2xl rounded-full shadow-lg mx-auto mt-4 mb-4">

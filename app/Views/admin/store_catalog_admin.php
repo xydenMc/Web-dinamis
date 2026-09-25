@@ -27,6 +27,7 @@ $categories = array_values(array_unique(array_filter(array_map(static fn(array $
     <style>
         body{font-family:'Plus Jakarta Sans',sans-serif}.edit-row{display:none}.edit-row.open{display:table-row}.edit-form-grid{display:grid;grid-template-columns:repeat(4,minmax(150px,1fr));gap:12px}.field{width:100%;border:1px solid #ded6ce;border-radius:12px;padding:10px 12px;background:#fff;color:#261e1a}.field:focus{outline:2px solid #bf542c;outline-offset:1px} @media(max-width:700px){.admin-sidebar{display:none}.admin-content{padding-left:0!important}.edit-form-grid{grid-template-columns:1fr 1fr}}
     </style>
+    <link rel="stylesheet" href="<?= base_url('css/admin-typography.css') ?>">
 </head>
 <body class="min-h-screen bg-background text-on-surface">
     <aside class="admin-sidebar fixed inset-y-0 left-0 z-30 flex w-72 flex-col justify-between border-r border-stone-200 bg-surface-container-low/90 p-6 shadow-sm backdrop-blur-2xl">
