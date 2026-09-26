@@ -84,6 +84,7 @@ $routes->post('/transaksi/update-status/(:num)', 'AdminTransaksi::updateStatus/$
 
 // Admin reports
 $routes->get('/admin/laporan', 'Admin\Report::index', ['filter' => 'role:admin']);
+$routes->get('/admin/laporan/struk/(:num)', 'Admin\Report::receipt/$1', ['filter' => 'role:admin']);
 $routes->get('/admin/laporan/export', 'Admin\Report::exportCsv', ['filter' => 'role:admin']);
 $routes->get('/admin/laporan/export-pdf', 'Admin\Report::exportPdf', ['filter' => 'role:admin']);
 

@@ -15,11 +15,33 @@ class Report extends BaseController
             'startDate' => $filters['start_date'],
             'endDate' => $filters['end_date'],
             'transactions' => $transactions,
+            'pendingOrders' => $this->db->table('transaksi')->where('status', 'Pending')->countAllResults(),
             'totalRevenue' => array_sum(array_map(static fn(array $row): float => $row['status'] === 'Dibatalkan' ? 0 : (float) $row['total_harga'], $transactions)),
             'totalTransactions' => count($transactions),
         ];
 
         return view('admin/reports/index', $data);
+    }
+
+    public function receipt(int $id)
+    {
+        $transaction = $this->db->table('transaksi t')
+            ->select('t.*, u.nama as nama_pelanggan')
+            ->join('users u', 'u.id = t.id_pelanggan', 'left')
+            ->where('t.id_transaksi', $id)
+            ->get()->getRowArray();
+
+        if (!$transaction) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound('Struk pesanan tidak ditemukan.');
+        }
+
+        $items = $this->db->table('detail_transaksi dt')
+            ->select('dt.*, p.nama_produk')
+            ->join('produk p', 'p.id_produk = dt.id_produk', 'left')
+            ->where('dt.id_transaksi', $id)
+            ->get()->getResultArray();
+
+        return view('admin/reports/receipt', ['transaction' => $transaction, 'items' => $items]);
     }
 
     public function exportCsv()

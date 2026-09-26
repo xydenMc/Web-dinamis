@@ -18,6 +18,7 @@ class StoreProducts extends BaseController
         return view('admin/store_products', [
             'title' => 'Kelola Produk - Griya Pot Bunga',
             'products' => $this->products->orderBy('nama_produk', 'ASC')->findAll(),
+            'pendingOrders' => (new \App\Models\TransaksiModel())->getCountByStatus('Pending'),
         ]);
     }
 

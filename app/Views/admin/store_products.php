@@ -26,8 +26,13 @@ $activePercent = $totalProducts > 0 ? (int) round(($activeProducts / $totalProdu
             'on-surface': '#261e1a', 'on-surface-variant': '#71655e', secondary: '#5c735d',
             'secondary-container': '#eef3ee', error: '#9b3d1c', 'error-container': '#faede6',
             'primary-fixed': '#f5d9cd', 'tertiary-fixed': '#fcf6e8', 'on-primary-fixed-variant': '#7c331a',
-            'on-tertiary-fixed-variant': '#936a16'
-        }, fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], serif: ['Playfair Display', 'Georgia', 'serif'] } } };
+            'on-tertiary-fixed-variant': '#936a16',
+            clay: {50:'#fdf8f5',100:'#faede6',200:'#f5d9cd',300:'#ecbca8',400:'#df9477',500:'#c85a32',600:'#b94e27',700:'#9b3d1c',800:'#7c331a',900:'#662d18'},
+            botanica: {sand:'#fcf9f4',surface:'#f7f2ea',dark:'#261e1a',muted:'#71655e',sage:'#5c735d',sageLight:'#eef3ee',amberLight:'#fcf6e8',amberBorder:'#f0dfbe',amberDark:'#936a16'}
+        },
+        boxShadow: {'liquid':'0 8px 32px 0 rgba(197,106,73,.08),0 2px 8px 0 rgba(0,0,0,.03)','liquid-glow':'0 10px 25px -4px rgba(200,90,50,.35)','subtle-glass':'0 4px 24px -1px rgba(50,30,20,.04)'},
+        fontFamily: { sans: ['Plus Jakarta Sans', 'sans-serif'], serif: ['Playfair Display', 'Georgia', 'serif'] }
+        } } };
     </script>
     <style>
         body{font-family:'Plus Jakarta Sans',sans-serif;background:radial-gradient(ellipse at 15% 0%,rgba(245,217,205,.28),transparent 34%),radial-gradient(ellipse at 90% 85%,rgba(252,246,232,.65),transparent 35%),#fcf9f4}
@@ -54,23 +59,23 @@ $activePercent = $totalProducts > 0 ? (int) round(($activeProducts / $totalProdu
     <link rel="stylesheet" href="<?= base_url('css/admin-typography.css') ?>">
 </head>
 <body class="min-h-screen bg-background text-on-surface antialiased">
-    <aside class="admin-sidebar fixed inset-y-0 left-0 z-30 flex w-72 flex-col justify-between p-6 shadow-[0_1px_12px_rgba(42,30,23,0.06)] backdrop-blur-2xl">
+    <aside class="w-72 fixed inset-y-0 left-0 z-30 glass-sidebar border-r border-stone-200/60 flex flex-col justify-between p-6 shadow-subtle-glass transition-all">
         <div>
-            <a class="mb-8 flex items-center gap-3 border-b border-stone-200 pb-6 text-inherit no-underline" href="<?= base_url('/dashboard') ?>">
-                <span class="grid h-11 w-11 shrink-0 place-items-center overflow-hidden rounded-2xl bg-white p-1 shadow-sm"><img class="h-full w-full rounded-xl object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpwvO9iQZ9lDuh8yr22477P8XcdNBR4_m47lhkSeptg4KRN1mKNgHUC_C-Bz_34DomPfduGCmd0dBQDdBwb6HwRI634h8GcBl0MOAjtwlq3cPBfwREhRDd-GQ5FEATZmEjJpkd-bGJX4j_R9lpdrVgHqRAECM9rEQ_3rztgRbmHcnjL3cwdaRkP6Hbuq_l8m0_jQSJiMii3Cg5FUnvJNIht8zg3HAffzEkU_1738FKJw5_qWc3_DHqLQ" alt="Logo Griya Pot Bunga"></span>
-                <span><strong class="block text-base">Griya Pot Bunga</strong><small class="text-xs font-semibold uppercase tracking-wider text-primary">Studio Kasongan / Admin</small></span>
-            </a>
-            <p class="mb-2 px-3 text-xs font-bold uppercase tracking-widest text-on-surface-variant">Menu utama</p>
-            <nav class="space-y-1">
-                <a class="flex items-center gap-3 rounded-xl px-3 py-3 text-on-surface-variant transition hover:bg-surface-container-high" href="<?= base_url('/dashboard') ?>"><span class="material-symbols-outlined">dashboard</span>Dashboard</a>
-                <a class="flex items-center gap-3 rounded-xl px-3 py-3 text-on-surface-variant transition hover:bg-surface-container-high" href="<?= base_url('/admin/transaksi') ?>"><span class="material-symbols-outlined">local_shipping</span>Pesanan Masuk</a>
-                <a aria-current="page" class="flex items-center gap-3 rounded-xl bg-primary-container px-3 py-3 font-semibold text-white" href="<?= base_url('/admin/kelola-produk') ?>"><span class="material-symbols-outlined">potted_plant</span>Kelola Produk</a>
-                <a class="flex items-center gap-3 rounded-xl px-3 py-3 text-on-surface-variant transition hover:bg-surface-container-high" href="<?= base_url('/admin/laporan') ?>"><span class="material-symbols-outlined">summarize</span>Laporan Pesanan</a>
-            </nav>
-            <p class="mb-2 mt-7 px-3 text-xs font-bold uppercase tracking-widest text-on-surface-variant">Akses toko</p>
-            <a class="flex items-center gap-3 rounded-xl px-3 py-3 text-on-surface-variant transition hover:bg-surface-container-high" href="<?= base_url('/katalog') ?>"><span class="material-symbols-outlined">storefront</span>Lihat Etalase</a>
+            <div class="flex items-center gap-3.5 pb-7 mb-7 border-b border-stone-200/60" data-purpose="brand-header">
+                <div class="w-12 h-12 rounded-2xl bg-white p-1 flex items-center justify-center shadow-liquid ring-2 ring-white/80 overflow-hidden"><img class="w-full h-full rounded-xl object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpwvO9iQZ9lDuh8yr22477P8XcdNBR4_m47lhkSeptg4KRN1mKNgHUC_C-Bz_34DomPfduGCmd0dBQDdBwb6HwRI634h8GcBl0MOAjtwlq3cPBfwREhRDd-GQ5FEATZmEjJpkd-bGJX4j_R9lpdrVgHqRAECM9rEQ_3rztgRbmHcnjL3cwdaRkP6Hbuq_l8m0_jQSJiMii3Cg5FUnvJNIht8zg3HAffzEkU_1738FKJw5_qWc3_DHqLQ" alt="Logo Griya Pot Bunga"></div>
+                <div><h1 class="font-serif font-bold text-lg text-botanica-dark tracking-tight leading-tight">Griya Pot Bunga</h1><p class="text-[10px] tracking-wider font-semibold uppercase text-clay-600 mt-0.5">STUDIO KASONGAN / PANEL ADMIN</p></div>
+            </div>
+            <div class="space-y-6">
+                <div><p class="text-[11px] font-bold tracking-widest text-botanica-muted/70 uppercase px-3 mb-2.5">Menu Studio</p><nav class="space-y-1.5">
+                    <a class="flex items-center gap-3 px-4 py-3 rounded-2xl text-botanica-dark/80 hover:text-clay-600 hover:bg-stone-200/40 transition font-medium text-sm" href="<?= base_url('/dashboard') ?>"><svg class="w-5 h-5 text-botanica-muted" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect height="7" rx="1.5" width="7" x="3" y="3"></rect><rect height="7" rx="1.5" width="7" x="14" y="3"></rect><rect height="7" rx="1.5" width="7" x="14" y="14"></rect><rect height="7" rx="1.5" width="7" x="3" y="14"></rect></svg><span>Dashboard</span></a>
+                    <a class="flex items-center justify-between px-4 py-3 rounded-2xl text-botanica-dark/80 hover:text-clay-600 hover:bg-stone-200/40 transition font-medium text-sm" href="<?= base_url('/admin/transaksi') ?>"><div class="flex items-center gap-3"><svg class="w-5 h-5 text-botanica-muted" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" stroke-linecap="round" stroke-linejoin="round"></path></svg><span>Pesanan Masuk</span></div><?php if (!empty($pendingOrders)): ?><span class="text-xs bg-stone-200/70 text-botanica-dark font-medium px-2 py-0.5 rounded-full"><?= esc($pendingOrders) ?></span><?php endif; ?></a>
+                    <a aria-current="page" class="flex items-center gap-3 px-4 py-3 rounded-2xl bg-gradient-to-r from-clay-500 to-clay-600 text-white font-medium text-sm shadow-liquid-glow transition-all" href="<?= base_url('/admin/kelola-produk') ?>"><svg class="w-5 h-5 opacity-90" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" stroke-linecap="round" stroke-linejoin="round"></path></svg><span>Kelola Produk</span></a>
+                    <a class="flex items-center gap-3 px-4 py-3 rounded-2xl text-botanica-dark/80 hover:text-clay-600 hover:bg-stone-200/40 transition font-medium text-sm" href="<?= base_url('/admin/laporan') ?>"><svg class="w-5 h-5 text-botanica-muted" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h7l5 5v13H5V3h2zm7 0v5h5M8 13h8m-8 4h8" stroke-linecap="round" stroke-linejoin="round"></path></svg><span>Laporan Pesanan</span></a>
+                </nav></div>
+                <div><p class="text-[11px] font-bold tracking-widest text-botanica-muted/70 uppercase px-3 mb-2.5">Akses Toko</p><a class="flex items-center justify-between px-4 py-3 rounded-2xl text-botanica-dark/80 hover:text-clay-600 hover:bg-stone-200/40 transition font-medium text-sm group" href="<?= base_url('/') ?>" target="_blank"><div class="flex items-center gap-3"><svg class="w-5 h-5 text-botanica-muted group-hover:text-clay-600 transition" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" stroke-linecap="round" stroke-linejoin="round"></path></svg><span>Lihat Etalase</span></div><svg class="w-4 h-4 text-stone-400 group-hover:translate-x-0.5 transition" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg></a></div>
+            </div>
         </div>
-        <a class="flex items-center gap-3 rounded-xl px-3 py-3 text-on-surface-variant transition hover:bg-error-container hover:text-error" href="<?= base_url('/admin/logout') ?>"><span class="material-symbols-outlined">logout</span>Keluar Sesi Admin</a>
+        <div class="pt-4 border-t border-stone-200/60 space-y-3"><a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-stone-500 hover:text-red-700 hover:bg-red-50/60 transition text-sm font-medium" href="<?= base_url('/admin/logout') ?>"><svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-linecap="round" stroke-linejoin="round"></path></svg><span>Keluar Sesi Admin</span></a></div>
     </aside>
 
     <div class="admin-content min-h-screen pl-72">

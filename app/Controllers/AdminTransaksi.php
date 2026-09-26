@@ -21,21 +21,49 @@ class AdminTransaksi extends Controller
 
     public function index()
     {
-        $statusFilter = $this->request->getGet('status') ?? 'all';
+        $statusFilter = (string) ($this->request->getGet('status') ?? 'all');
+        $allowedStatuses = ['all', 'Pending', 'Diproses', 'Selesai', 'Dibatalkan'];
+        if (!in_array($statusFilter, $allowedStatuses, true)) {
+            $statusFilter = 'all';
+        }
+
+        $startDate = $this->validDate((string) ($this->request->getGet('start_date') ?? ''));
+        $endDate = $this->validDate((string) ($this->request->getGet('end_date') ?? ''));
+        if ($startDate !== '' && $endDate !== '' && $startDate > $endDate) {
+            [$startDate, $endDate] = [$endDate, $startDate];
+        }
 
         $data['title'] = 'Kelola Transaksi - Griya Pot Bunga';
         $data['user'] = session()->get('username');
         $data['role'] = session()->get('role');
 
-        if ($statusFilter === 'all') {
-            $data['transaksis'] = $this->transaksiModel->orderBy('tanggal', 'DESC')->findAll();
-        } else {
-            $data['transaksis'] = $this->transaksiModel->getTransaksiByStatus($statusFilter);
+        $builder = $this->transaksiModel->builder();
+        if ($statusFilter !== 'all') {
+            $builder->where('status', $statusFilter);
         }
+        if ($startDate !== '') {
+            $builder->where('tanggal >=', $startDate . ' 00:00:00');
+        }
+        if ($endDate !== '') {
+            $builder->where('tanggal <=', $endDate . ' 23:59:59');
+        }
+        $data['transaksis'] = $builder->orderBy('tanggal', 'DESC')->get()->getResultArray();
 
         $data['status_filter'] = $statusFilter;
+        $data['start_date'] = $startDate;
+        $data['end_date'] = $endDate;
+        $data['pendingOrders'] = $this->transaksiModel->getCountByStatus('Pending');
 
         return view('admin/transaksi_view', $data);
+    }
+
+    private function validDate(string $date): string
+    {
+        if (!preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', $date, $matches)) {
+            return '';
+        }
+
+        return checkdate((int) $matches[2], (int) $matches[3], (int) $matches[1]) ? $date : '';
     }
 
     public function detail($id = null)

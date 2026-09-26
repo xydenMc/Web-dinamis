@@ -1,23 +1,9 @@
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap');
 
-body,
-button,
-input,
-select,
-textarea,
-table {
+*,
+*::before,
+*::after {
     font-family: 'Plus Jakarta Sans', sans-serif !important;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.page-title,
-.title {
-    font-family: 'Playfair Display', Georgia, serif !important;
 }
 
 .material-symbols-outlined {

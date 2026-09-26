@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="id">
+<head>
+    <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Struk <?= esc($transaction['nomor_transaksi']) ?> | Griya Pot Bunga</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="<?= base_url('css/admin-typography.css') ?>">
+    <style>
+        *{box-sizing:border-box}body{margin:0;padding:36px 16px;background:#f7f2ea;color:#261e1a;font:14px 'Plus Jakarta Sans',sans-serif}.toolbar{max-width:760px;margin:0 auto 16px;display:flex;justify-content:space-between;gap:10px}.button{display:inline-flex;align-items:center;justify-content:center;border:0;border-radius:999px;background:#c85a32;color:white;padding:11px 18px;text-decoration:none;font:600 13px 'Plus Jakarta Sans',sans-serif;cursor:pointer}.button.light{background:white;color:#57423b;border:1px solid #eadfcf}.receipt{max-width:760px;margin:0 auto;background:white;border:1px solid #eadfcf;border-radius:24px;padding:42px;box-shadow:0 18px 55px #49301c12}.brand{display:flex;align-items:center;gap:14px}.logo{display:grid;place-items:center;width:52px;height:52px;border-radius:17px;background:#faede6;color:#c85a32;font-size:24px;font-weight:700}.brand h1{margin:0;font-size:20px}.brand p{margin:4px 0 0;color:#786b63;font-size:12px}.receipt-title{margin:34px 0 6px;font-size:25px}.sub{margin:0;color:#786b63}.rule{height:1px;background:#eee5dc;margin:22px 0}.meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}.meta label{display:block;margin-bottom:5px;color:#887970;font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase}.meta strong{font-size:13px}.status{display:inline-block;padding:5px 10px;border-radius:999px;background:#eef3ee;color:#526d57;font-size:11px;font-weight:700}.items{width:100%;border-collapse:collapse;margin-top:20px}.items th{text-align:left;padding:11px 8px;border-bottom:1px solid #eadfcf;color:#786b63;font-size:10px;letter-spacing:.07em;text-transform:uppercase}.items td{padding:14px 8px;border-bottom:1px solid #f1ece6}.right{text-align:right}.summary{max-width:310px;margin:18px 0 0 auto}.sumline{display:flex;justify-content:space-between;padding:7px 0;color:#786b63}.sumline.total{margin-top:8px;padding-top:14px;border-top:1px solid #eadfcf;color:#261e1a;font-size:17px;font-weight:700}.note{margin-top:28px;padding:16px;border-radius:14px;background:#fcf9f4;color:#71655e;line-height:1.7}.footer{margin-top:28px;text-align:center;color:#887970;font-size:12px}@media(max-width:560px){body{padding:18px 10px}.receipt{padding:25px 18px;border-radius:18px}.toolbar{padding:0 3px}.meta{grid-template-columns:1fr 1fr;gap:14px}.items{font-size:12px}.items th,.items td{padding:10px 5px}}@media print{body{padding:0;background:#fff}.toolbar{display:none}.receipt{max-width:none;border:0;border-radius:0;padding:16mm;box-shadow:none}.note{background:#f8f6f3;print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+    </style>
+</head>
+<body>
+    <div class="toolbar"><a class="button light" href="<?= base_url('/admin/laporan') ?>">← Kembali ke laporan</a><button class="button" type="button" onclick="window.print()">Cetak struk</button></div>
+    <main class="receipt">
+        <header class="brand"><span class="logo">G</span><div><h1>Griya Pot Bunga</h1><p>Studio Kasongan · Kerajinan pot pilihan</p></div></header>
+        <h2 class="receipt-title">Struk pesanan</h2><p class="sub">Terima kasih telah berbelanja bersama kami.</p>
+        <div class="rule"></div>
+        <section class="meta"><div><label>Nomor pesanan</label><strong><?= esc($transaction['nomor_transaksi']) ?></strong></div><div><label>Tanggal transaksi</label><strong><?= esc(date('d M Y · H:i', strtotime($transaction['tanggal']))) ?></strong></div><div><label>Nama pelanggan</label><strong><?= esc($transaction['nama_pelanggan'] ?? 'Pelanggan') ?></strong></div><div><label>Status pesanan</label><span class="status"><?= esc($transaction['status']) ?></span></div><div><label>Pembayaran</label><strong><?= esc($transaction['metode_pembayaran'] ?? '-') ?></strong></div><div><label>Nomor telepon</label><strong><?= esc($transaction['nomor_telepon'] ?? '-') ?></strong></div></section>
+        <?php if (!empty($transaction['alamat_kirim'])): ?><div class="note"><strong>Alamat pengiriman</strong><br><?= nl2br(esc($transaction['alamat_kirim'])) ?></div><?php endif; ?>
+        <div class="rule"></div>
+        <h3>Rincian pesanan</h3>
+        <table class="items"><thead><tr><th>Produk</th><th class="right">Harga</th><th class="right">Qty</th><th class="right">Subtotal</th></tr></thead><tbody><?php foreach ($items as $item): ?><tr><td><?= esc($item['nama_produk'] ?? 'Produk') ?></td><td class="right">Rp <?= number_format((float) $item['harga_satuan'], 0, ',', '.') ?></td><td class="right"><?= (int) $item['jumlah'] ?></td><td class="right">Rp <?= number_format((float) $item['subtotal'], 0, ',', '.') ?></td></tr><?php endforeach; ?></tbody></table>
+        <section class="summary"><div class="sumline"><span>Total item</span><span><?= (int) $transaction['total_item'] ?> produk</span></div><div class="sumline total"><span>Total pembayaran</span><span>Rp <?= number_format((float) $transaction['total_harga'], 0, ',', '.') ?></span></div></section>
+        <?php if (!empty($transaction['catatan'])): ?><div class="note"><strong>Catatan pesanan</strong><br><?= nl2br(esc($transaction['catatan'])) ?></div><?php endif; ?>
+        <footer class="footer">Griya Pot Bunga · Dibuat pada <?= esc(date('d M Y H:i')) ?></footer>
+    </main>
+</body>
+</html>
